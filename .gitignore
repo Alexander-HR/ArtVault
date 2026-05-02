@@ -427,3 +427,9 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Some mac stuff lol
+.DS_Store
+
+# The venvs
+.venv
