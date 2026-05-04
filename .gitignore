@@ -433,3 +433,10 @@ FodyWeavers.xsd
 
 # The venvs
 .venv
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+db.sqlite3
+.idea/
