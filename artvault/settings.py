@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'artworks',
     'bids',
     'dashboards',
+    'finalization',
 ]
 
 MIDDLEWARE = [
