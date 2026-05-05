@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'artvault.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'verklegt_namskeid_db',
-        'USER': 'verklegt_db_user',
+        'NAME': config('DB_NAME', default=''),
+        'USER': config('DB_USER', default=''),
         'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': 'db-verklegt-namskeid-ii-eu-06uk6n.postgres.database.azure.com',
-        'PORT': '5432'
+        'HOST': config('DB_HOST', default=''),
+        'PORT': config('DB_PORT', default=''),
     }
 }
 
