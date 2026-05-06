@@ -105,7 +105,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # User authentication for user model in accounts
 AUTH_USER_MODEL = "accounts.User"
-
+LOGIN_URL='artvault.urls.login'
+LOGIN_REDIRECT_URL='artvault.urls.'
+LOGOUT_REDIRECT_URL='artvault.urls.login'
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
