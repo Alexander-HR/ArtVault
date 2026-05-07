@@ -79,8 +79,8 @@ WSGI_APPLICATION = "artvault.wsgi.application"
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config('DB_NAME', default=''),
+        'ENGINE': config('DB_ENGINE', default='django.db.backends.sqlite3'),
+        'NAME': config('DB_NAME', default=str(BASE_DIR / 'db.sqlite3')),
         'USER': config('DB_USER', default=''),
         'PASSWORD': config('DB_PASSWORD', default=''),
         'HOST': config('DB_HOST', default=''),
@@ -109,9 +109,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # User authentication for user model in accounts
 AUTH_USER_MODEL = "accounts.User"
-LOGIN_URL='artvault.urls.login'
-LOGIN_REDIRECT_URL='artvault.urls.'
-LOGOUT_REDIRECT_URL='artvault.urls.login'
+LOGIN_URL='/account/login'
+LOGIN_REDIRECT_URL='/'
+LOGOUT_REDIRECT_URL='/account/login'
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
