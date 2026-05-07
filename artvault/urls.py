@@ -8,4 +8,5 @@ urlpatterns = [
 
     # ✅ profile + accounts
     path('', include('accounts.urls')),
+    path("artworks/", include("artworks.urls")),
 ]

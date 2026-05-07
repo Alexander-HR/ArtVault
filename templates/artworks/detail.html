@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary mb-4">← Back to Home</a>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="bg-light border rounded d-flex align-items-center justify-content-center" style="height: 320px;">
+                <span class="text-muted">Artwork Image Placeholder</span>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <h1>{{ artwork.title }}</h1>
+            <p class="text-muted">Seller: {{ artwork.artist }}</p>
+
+            <p>{{ artwork.description }}</p>
+
+            <ul class="list-group mb-4">
+                <li class="list-group-item">
+                    <strong>Starting price:</strong> {{ artwork.starting_price }}
+                </li>
+                <li class="list-group-item">
+                    <strong>Status:</strong> {{ artwork.status }}
+                </li>
+            </ul>
+
+            <button class="btn btn-primary" disabled>Submit Bid</button>
+            <p class="text-muted mt-2">Bidding functionality will be added later.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
