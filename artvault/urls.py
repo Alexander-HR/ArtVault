@@ -8,4 +8,3 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path("artworks/", include("artworks.urls")),
 ]
-]
