@@ -439,3 +439,7 @@ __pycache__/
 .env
 db.sqlite3
 .idea/
+
+#database related files
+db.sqlite3
+verklegt_namskeid_db
