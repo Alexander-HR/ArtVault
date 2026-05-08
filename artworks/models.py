@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.db import models
+from accounts.models import User
+
 class Artwork(models.Model):
     MEDIUM_CHOICES = [
         ('oil', 'Oil painting'),

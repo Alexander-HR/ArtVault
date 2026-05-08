@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db import models
 
 from artworks.models import Artwork
+from accounts.models import User
 
 class Bid(models.Model):
     STATUS_CHOICES = (
