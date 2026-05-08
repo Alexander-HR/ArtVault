@@ -5,6 +5,20 @@ from django.shortcuts import render, redirect
 from .forms import ProfileForm
 from .models import Profile
 
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+# Create your views here.
+
+
+def register(request):
+    if request.method == "POST":
+        print(1)
+    else:
+        return render(request, "user/register.html", {
+            "form": UserCreationForm()
+        })
 
 @login_required
 def profile_view(request):
@@ -47,3 +61,11 @@ def seller_profile(request, seller_id):
         "seller": seller,
         "artworks": artworks,
     })
+    return render(
+        request,
+        "accounts/seller_profile.html",
+        {
+            "seller": seller,
+            "artworks": artworks,
+        },
+    )
