@@ -3,4 +3,5 @@ from . import views
 
 urlpatterns = [
     path("<int:artwork_id>/", views.artwork_detail, name="artwork_detail"),
+    path("", views.index, name="artworks.index"),
 ]

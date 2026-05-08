@@ -5,3 +5,8 @@ body {
 .navbar-brand {
     letter-spacing: 0.5px;
 }
+
+img.card-img-top.artwork-thumbnail {
+    height: 250px;
+    object-fit: cover;
+}
