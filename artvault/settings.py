@@ -109,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # User authentication for user model in accounts
 AUTH_USER_MODEL = "accounts.User"
-LOGIN_URL='/account/login'
+LOGIN_URL='/accounts/login'
 LOGIN_REDIRECT_URL='/'
 LOGOUT_REDIRECT_URL='/account/login'
 
@@ -133,3 +133,7 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"

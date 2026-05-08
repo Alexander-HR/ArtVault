@@ -1,3 +1,10 @@
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+
+from .forms import ProfileForm
+from .models import Profile
+
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -15,7 +22,25 @@ def register(request):
 
 @login_required
 def profile_view(request):
-    return render(request, "profile.html")
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=profile, user=request.user)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect("profile")
+
+        messages.error(request, "Profile update failed. Please check the errors below.")
+    else:
+        form = ProfileForm(instance=profile, user=request.user)
+
+    return render(request, "profile.html", {
+        "form": form,
+        "profile": profile,
+    })
+
 
 def seller_profile(request, seller_id):
     seller = {
@@ -27,23 +52,15 @@ def seller_profile(request, seller_id):
     }
 
     artworks = [
-        {
-            "title": "Sample Artwork 1",
-            "status": "Available",
-            "price": "1000 ISK",
-        },
-        {
-            "title": "Sample Artwork 2",
-            "status": "Available",
-            "price": "2500 ISK",
-        },
-        {
-            "title": "Sample Artwork 3",
-            "status": "Sold",
-            "price": "4000 ISK",
-        },
+        {"title": "Sample Artwork 1", "status": "Available", "price": "1000 ISK"},
+        {"title": "Sample Artwork 2", "status": "Available", "price": "2500 ISK"},
+        {"title": "Sample Artwork 3", "status": "Sold", "price": "4000 ISK"},
     ]
 
+    return render(request, "accounts/seller_profile.html", {
+        "seller": seller,
+        "artworks": artworks,
+    })
     return render(
         request,
         "accounts/seller_profile.html",

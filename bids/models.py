@@ -1,4 +1,4 @@
-
+from django.conf import settings
 from django.db import models
 
 from artworks.models import Artwork
@@ -14,7 +14,7 @@ class Bid(models.Model):
     )
     id = models.AutoField(primary_key=True)
     artwork = models.ForeignKey(Artwork, on_delete=models.CASCADE, related_name='bids')
-    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bids')
+    buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bids')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(choices=STATUS_CHOICES, default='pending', max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)

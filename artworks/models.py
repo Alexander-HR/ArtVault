@@ -1,10 +1,7 @@
-from django.db import models
-
-# Create your models here.
+from django.conf import settings
 from django.db import models
 from accounts.models import User
 
-# Create your models here.
 class Artwork(models.Model):
     MEDIUM_CHOICES = [
         ('oil', 'Oil painting'),
@@ -27,7 +24,7 @@ class Artwork(models.Model):
     starting_bid = models.PositiveIntegerField(default=0)
     date_listed = models.DateField(auto_now=False, auto_now_add=True)
     sold = models.BooleanField(default=False)
-    seller = models.ForeignKey(User, on_delete=models.CASCADE)
+    seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     dimensions = models.CharField(max_length=50)
     year_created = models.PositiveIntegerField()
     edition = models.CharField(max_length=50)
