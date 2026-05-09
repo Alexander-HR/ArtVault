@@ -6,28 +6,60 @@
 
     <div class="row">
         <div class="col-md-5">
-            <div class="bg-light border rounded d-flex align-items-center justify-content-center" style="height: 320px;">
-                <span class="text-muted">Artwork Image Placeholder</span>
-            </div>
+            {% if artwork.images.first %}
+                <img src="{{ artwork.images.first.image.url }}"
+                     alt="{{ artwork.title }}"
+                     class="img-fluid rounded border">
+            {% else %}
+                <div class="bg-light border rounded d-flex align-items-center justify-content-center" style="height: 320px;">
+                    <span class="text-muted">Artwork Image Placeholder</span>
+                </div>
+            {% endif %}
         </div>
 
         <div class="col-md-7">
             <h1>{{ artwork.title }}</h1>
-            <p class="text-muted">Seller: {{ artwork.artist }}</p>
-
-            <p>{{ artwork.description }}</p>
 
             <ul class="list-group mb-4">
-                <li class="list-group-item">
-                    <strong>Starting price:</strong> {{ artwork.starting_price }}
-                </li>
-                <li class="list-group-item">
-                    <strong>Status:</strong> {{ artwork.status }}
-                </li>
+                <li class="list-group-item"><strong>Medium:</strong> {{ artwork.get_medium_display }}</li>
+                <li class="list-group-item"><strong>Style:</strong> {{ artwork.get_style_display }}</li>
+                <li class="list-group-item"><strong>Starting bid:</strong> {{ artwork.starting_bid }} ISK</li>
+                <li class="list-group-item"><strong>Listing date:</strong> {{ artwork.date_listed }}</li>
+                <li class="list-group-item"><strong>Status:</strong> {% if artwork.sold %}Sold{% else %}Available{% endif %}</li>
             </ul>
 
-            <button class="btn btn-primary" disabled>Submit Bid</button>
-            <p class="text-muted mt-2">Bidding functionality will be added later.</p>
+            <div class="card mb-4">
+                <div class="card-header">
+                    Seller information
+                </div>
+
+                <div class="card-body">
+                    {% if seller %}
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-light border rounded-circle d-flex align-items-center justify-content-center"
+                                 style="width:70px; height:70px;">
+                                <span class="text-muted small">Seller</span>
+                            </div>
+
+                            <div>
+                                <h5 class="mb-1">{{ seller.username }}</h5>
+                                <a href="{% url 'seller_profile' seller.id %}" class="btn btn-outline-primary btn-sm">
+                                    View seller profile
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">Seller information is currently unavailable.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if artwork.sold %}
+                <button class="btn btn-secondary" disabled>Artwork sold</button>
+            {% else %}
+                <button class="btn btn-primary" disabled>Submit Bid</button>
+                <p class="text-muted mt-2">Bidding functionality will be added later.</p>
+            {% endif %}
         </div>
     </div>
 </div>

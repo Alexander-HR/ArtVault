@@ -1,17 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from artworks.models import Artwork
 
-def artwork_detail(request, artwork_id):
-    artwork = {
-        "id": artwork_id,
-        "title": "Sample Artwork",
-        "artist": "Sample Seller",
-        "description": "This is a placeholder artwork detail page. Real artwork data will be connected later.",
-        "starting_price": "1000 ISK",
-        "status": "Available",
-    }
 
-    return render(request, "artworks/detail.html", {"artwork": artwork})
+def artwork_detail(request, artwork_id):
+    artwork = get_object_or_404(Artwork, id=artwork_id)
+    seller = getattr(artwork, "seller", None)
+
+    return render(request, "artworks/detail.html", {
+        "artwork": artwork,
+        "seller": seller,
+    })
 
 
 def index(request):
