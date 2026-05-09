@@ -1,14 +1,28 @@
-from django.shortcuts import render
-from artworks.models import Artwork
+from django.shortcuts import get_object_or_404, render
+
+from .models import Artwork
+from bids.models import Bid
+
 
 def artwork_detail(request, artwork_id):
-    artwork = {
-        "id": artwork_id,
-        "title": "Sample Artwork",
-        "artist": "Sample Seller",
-        "description": "This is a placeholder artwork detail page. Real artwork data will be connected later.",
-        "starting_price": "1000 ISK",
-        "status": "Available",
+    artwork = get_object_or_404(
+        Artwork.objects.prefetch_related("images", "bids"),
+        id=artwork_id,
+    )
+
+    user_bid = None
+
+    if request.user.is_authenticated:
+        user_bid = (
+            Bid.objects.filter(artwork=artwork, buyer=request.user)
+            .order_by("-created_at")
+            .first()
+        )
+
+    context = {
+        "artwork": artwork,
+        "images": artwork.images.all(),
+        "user_bid": user_bid,
     }
 
     return render(request, "artworks/detail.html", {"artwork": artwork})
