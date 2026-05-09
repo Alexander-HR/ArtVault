@@ -6,7 +6,7 @@
         {% for artwork in artworks %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
-                    <img src="{{ artwork.image }}" class="card-img-top artwork-thumbnail" alt="{{ artwork.title }}">
+                    <img src={{ artwork.images.first.image.url }} class="card-img-top artwork-thumbnail" alt="{{ artwork.title }}">
 
                     <div class="card-body">
                          {% if artwork.sold %}
@@ -20,7 +20,7 @@
                         <p class="card-text">Medium: {{ artwork.medium }}</p>
                         <p class="card-text">Dimensions: {{ artwork.dimensions }}</p>
 
-                        <a class="btn btn-outline-dark mt-2" href="{% url 'artwork_detail' artwork.id %}">See more</a>
+                        <a class="btn btn-outline-dark mt-2" href="{% url 'artworks:artwork_detail' artwork.id %}">See more</a>
 
                     </div>
                 </div>

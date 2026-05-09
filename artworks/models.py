@@ -30,7 +30,7 @@ class Artwork(models.Model):
     edition = models.CharField(max_length=50)
     provenance = models.TextField()
     def __str__(self):
-        return self.title
+        return f'{self.title}, {self.id}'
 
 class ArtworkImage(models.Model):
     id = models.AutoField(primary_key=True)
