@@ -50,8 +50,8 @@
                             </div>
 
                             <div>
-                                <p class="mb-1"><strong>{{ seller.username }}</strong></p>
-                                <a href="{% url 'seller_profile' seller.id %}" class="btn btn-outline-primary btn-sm">
+                                <p class="mb-1"><strong>{{ artwork.seller.user }}</strong></p>
+                                <a href="{% url 'seller_profile' artwork.seller.id %}" class="btn btn-outline-primary btn-sm">
                                     View seller profile
                                 </a>
                             </div>
