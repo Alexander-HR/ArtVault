@@ -15,7 +15,7 @@ def artwork_detail(request, artwork_id):
 
 
 def index(request):
-    artworks = Artwork.objects.all()
+    artworks = Artwork.objects.prefetch_related("images")
 
     search = request.GET.get("search")
     medium = request.GET.get("medium")

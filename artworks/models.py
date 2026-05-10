@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from accounts.models import User
+from accounts.models import Seller
 
 class Artwork(models.Model):
     MEDIUM_CHOICES = [
