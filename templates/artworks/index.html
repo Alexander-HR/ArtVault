@@ -4,6 +4,54 @@
 {%block content%}
     <h2 class="mb-4">Artwork Catalogue</h2>
     <div class="row">
+        <form method="get" class="d-flex flex-wrap gap-2 mb-4">
+            <input type="text" name="search" placeholder=" Search titles" value="{{ search|default:'' }}">
+
+           <select name="sold" class="form-select w-auto">
+                <option value="">--All Artwork--</option>
+
+                <option value="available"
+                    {% if selected_sold == "available" %}selected{% endif %}>
+                    Available
+                </option>
+
+                <option value="sold"
+                    {% if selected_sold == "sold" %}selected{% endif %}>
+                    Sold
+                </option>
+            </select>
+
+            <select name="medium" class="form-select w-auto">
+                <option value="">--Medium--</option>
+                {% for value, label in medium_choices %}
+                    <option value="{{ value }}" {% if selected_medium == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <select name="style" class="form-select w-auto">
+                <option value="">--Style--</option>
+                {% for value, label in style_choices %}
+                    <option value="{{ value }}" {% if selected_style == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <select name="order_by" class="form-select w-auto">
+                <option value="">Order by</option>
+                <option value="starting_bid" {% if order_by == "starting_bid" %}selected{% endif %}>Price low to high</option>
+                <option value="-starting_bid" {% if order_by == "-starting_bid" %}selected{% endif %}>Price high to low</option>
+                <option value="title" {% if order_by == "title" %}selected{% endif %}>Title A-Z</option>
+                <option value="-title" {% if order_by == "-title" %}selected{% endif %}>Title Z-A</option>
+            </select>
+
+            <button type="submit" class="btn btn-dark">Apply Filters</button>
+
+            <a href="{% url 'artworks:index' %}" class="btn btn-outline-secondary">Clear Filters</a>
+        </form>
+
         {% for artwork in artworks %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
