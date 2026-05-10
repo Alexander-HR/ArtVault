@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from accounts.models import User
+from accounts.models import Seller
 
 class Artwork(models.Model):
     MEDIUM_CHOICES = [
@@ -24,7 +25,7 @@ class Artwork(models.Model):
     starting_bid = models.PositiveIntegerField(default=0)
     date_listed = models.DateField(auto_now=False, auto_now_add=True)
     sold = models.BooleanField(default=False)
-    seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    seller = models.ForeignKey("accounts.Seller",on_delete=models.CASCADE,related_name="artworks")
     dimensions = models.CharField(max_length=50)
     year_created = models.PositiveIntegerField()
     edition = models.CharField(max_length=50)
