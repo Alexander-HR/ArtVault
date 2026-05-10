@@ -24,8 +24,8 @@ class Seller(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     type = models.CharField(max_length=20, choices=SELLER_TYPE_CHOICES, default="individual")
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True)
-    logo = models.ImageField(upload_to="seller_logos/", blank=True, null=True)
-    cover_image = models.ImageField(upload_to="seller_covers/", blank=True, null=True)
+    logo = models.CharField(max_length=255)
+    cover_image = models.CharField(max_length=255)
     bio = models.TextField(blank=True)
 
     def __str__(self):
