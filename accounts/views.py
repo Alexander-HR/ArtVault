@@ -56,3 +56,12 @@ def seller_profile(request, seller_id):
         "seller": seller,
         "artworks": artworks,
     })
+
+
+def seller_list(request):
+    sellers = Seller.objects.all()
+
+    return render(request, "accounts/seller_list.html", {
+        "sellers": sellers,
+    })
+
