@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h2 class="mb-4">Artwork Sellers</h2>
+    <div class="row">
+            {% for seller in sellers %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{% static seller.logo %}" class="card-img-top artwork-thumbnail" alt="{{ seller.user.get_full_name }}">
+
+                    <div class="card-body">
+                        <h3 class="card-title">{{seller.user.get_full_name }}</h3>
+
+                        <p class="text-muted mb-1">
+                            {% if seller.type == "gallery" %}
+                            Gallery
+                        {% elif seller.type == "individual" %}
+                            Individual Seller
+                        {% endif %} </p>
+
+                        <a class="btn btn-outline-dark mt-2" href="{% url 'seller_profile' seller.id %}">Visit profile</a>
+                    </div>
+                </div>
+            </div>
+    {% endfor %}
+    </div>
+{% endblock %}

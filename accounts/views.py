@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
 from .forms import ProfileForm
-from .models import Profile
+from .models import Profile, Seller
 
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render
@@ -60,6 +60,13 @@ def seller_profile(request, seller_id):
     return render(request, "accounts/seller_profile.html", {
         "seller": seller,
         "artworks": artworks,
+    })
+
+def seller_list(request):
+    sellers = Seller.objects.all()
+
+    return render(request, "accounts/seller_list.html", {
+        "sellers": sellers,
     })
     return render(
         request,
