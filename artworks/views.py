@@ -25,9 +25,9 @@ def artwork_detail(request, artwork_id):
         "user_bid": user_bid,
     }
 
-    return render(request, "artworks/detail.html", {"artwork": artwork})
+    return render(request, "artworks/detail.html", context)
 
 
 def index(request):
     artworks = Artwork.objects.all()
-    return render(request, 'artworks/index.html', {'artworks': artworks})
+    return render(request, "artworks/index.html", {"artworks": artworks})
