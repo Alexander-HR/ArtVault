@@ -1,36 +1,67 @@
-from django.shortcuts import render, get_object_or_404
-from artworks.models import Artwork
+from django.shortcuts import get_object_or_404, render
+
+from .models import Artwork
+from bids.models import Bid
 
 
 def artwork_detail(request, artwork_id):
-    artwork = get_object_or_404(Artwork, id=artwork_id)
-    seller = getattr(artwork, "seller", None)
+    artwork = get_object_or_404(
+        Artwork.objects.prefetch_related("images", "bids"),
+        id=artwork_id,
+    )
 
-    return render(request, "artworks/detail.html", {
+    user_bid = None
+
+    if request.user.is_authenticated:
+        user_bid = (
+            Bid.objects.filter(artwork=artwork, buyer=request.user)
+            .order_by("-created_at")
+            .first()
+        )
+
+    context = {
         "artwork": artwork,
-        "seller": seller,
-    })
+        "images": artwork.images.all(),
+        "user_bid": user_bid,
+        "seller": getattr(artwork, "seller", None),
+    }
+
+    return render(request, "artworks/detail.html", context)
 
 
 def index(request):
-    artworks = [
-        {
-            "id": 1,
-            "title": "Sunset Over Reykjavik",
-            "starting_bid": 500,
-            "medium": "Oil painting",
-            "dimensions": "50 x 70 cm",
-            "sold": False,
-            "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
-        },
-        {
-            "id": 2,
-            "title": "Abstract Waves",
-            "starting_bid": 750,
-            "medium": "Acrylic",
-            "dimensions": "60 x 60 cm",
-            "sold": True,
-            "image": "https://helloart.com/cdn/shop/products/1_1699990399_30193.jpg?v=1700067461"
-        }
-    ]
-    return render(request, 'artworks/index.html', {'artworks': artworks})
+    artworks = Artwork.objects.all()
+
+    search = request.GET.get("search")
+    medium = request.GET.get("medium")
+    style = request.GET.get("style")
+    order_by = request.GET.get("order_by")
+    sold = request.GET.get("sold")
+
+    if search:
+        artworks = artworks.filter(title__icontains=search)
+
+    if medium:
+        artworks = artworks.filter(medium=medium)
+
+    if style:
+        artworks = artworks.filter(style=style)
+
+    if order_by in ["starting_bid", "-starting_bid", "title", "-title"]:
+        artworks = artworks.order_by(order_by)
+
+    if sold == "sold":
+        artworks = artworks.filter(sold=True)
+    elif sold == "available":
+        artworks = artworks.filter(sold=False)
+
+    return render(request, "artworks/index.html", {
+        "artworks": artworks,
+        "medium_choices": Artwork.MEDIUM_CHOICES,
+        "style_choices": Artwork.STYLE_CHOICES,
+        "selected_medium": medium,
+        "selected_style": style,
+        "search": search,
+        "order_by": order_by,
+        "selected_sold": sold,
+    })
