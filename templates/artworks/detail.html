@@ -125,7 +125,31 @@
                         </p>
                         <p class="text-muted">Bid resubmission functionality will be connected later.</p>
                     {% else %}
-                        <button class="btn btn-primary" disabled>Submit a bid</button>
+                        <button 
+                            class="btn btn-primary" 
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#bid-form-collapse"
+                            aria-expanded="false"
+                            aria-controls="bid-form-collapse">
+                            Place a Bid
+                        </button>
+                        <div class="collapse mt-3" id="bid-form-collapse">
+                            <div class="card card-body">
+                                <form method="post" action="{% url 'submit_bid' artwork.id %}">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="id_amount" class="form-label">Bid Amount (ISK)</label>
+                                        {{ form.amount }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="id_expires_at" class="form-label">Bid Expiry</label>
+                                        {{ form.expires_at }}
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Submit Bid</button>
+                                </form>
+                            </div>
+                        </div>
                         <p class="text-muted mt-2">Bid submission functionality will be connected later.</p>
                     {% endif %}
                 </div>
