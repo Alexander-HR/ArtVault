@@ -1,3 +1,5 @@
 from django.contrib import admin
+from finalization.models import Finalization, Payment
 
-# Register your models here.
+admin.site.register(Finalization)
+admin.site.register(Payment)
