@@ -24,6 +24,5 @@ def submit_bid(request, artwork_id):
 
 @login_required
 def my_bids(request):
-    bids = request.user.bids.select_related("artwork").order_by
-    ("-created_at")
+    bids = request.user.bids.select_related("artwork").order_by("-created_at")
     return render(request, "my-bids.html", {"bids":bids})
