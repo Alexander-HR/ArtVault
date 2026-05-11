@@ -7,10 +7,31 @@
             {% for seller in sellers %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
-                    <img src="{% static seller.logo %}" class="card-img-top artwork-thumbnail" alt="{{ seller.user.get_full_name }}">
+                    {% if seller.logo %}
+                        {% if seller.logo|slice:":7" == "/media/" %}
+                            <img src="{{ seller.logo }}"
+                                 class="card-img-top artwork-thumbnail"
+                                 alt="{{ seller.user.username }}">
+                        {% else %}
+                            <img src="{% static seller.logo %}"
+                                 class="card-img-top artwork-thumbnail"
+                                 alt="{{ seller.user.username }}">
+                        {% endif %}
+                    {% else %}
+                        <div class="bg-light border-bottom d-flex align-items-center justify-content-center"
+                             style="height: 220px;">
+                            <span class="text-muted">Seller Logo</span>
+                        </div>
+                    {% endif %}
 
                     <div class="card-body">
-                        <h3 class="card-title">{{seller.user.get_full_name }}</h3>
+                        <h3 class="card-title">
+                            {% if seller.user.get_full_name %}
+                                {{ seller.user.get_full_name }}
+                            {% else %}
+                                {{ seller.user.username }}
+                            {% endif %}
+                        </h3>
 
                         <p class="text-muted mb-1">
                             {% if seller.type == "gallery" %}
