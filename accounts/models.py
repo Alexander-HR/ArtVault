@@ -12,9 +12,18 @@ class Profile(models.Model):
         return self.user.username
 
 class Address(models.Model):
+    COUNTRY_CHOICES = [
+        ("Iceland", "Iceland"),
+        ("Denmark", "Denmark"),
+        ("Norway", "Norway"),
+        ("Sweden", "Sweden"),
+        ("United Kingdom", "United Kingdom"),
+        ("United States", "United States"),
+    ]
     street_name = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     postal_code = models.CharField(max_length=20)
+    country = models.CharField(max_length=20, choices=COUNTRY_CHOICES, default="Iceland")
 
 class Seller(models.Model):
     SELLER_TYPE_CHOICES = [
