@@ -1,3 +1,13 @@
 from django.shortcuts import render
 
-# Create your views here.
+def contact_step(request):
+    pass
+
+def payment_step(request):
+    pass
+
+def review_step(request):
+    pass
+
+def confirmation_step(request):
+    pass
