@@ -13,7 +13,10 @@ def contact_step(request, bid_id):
     finalization, created = Finalization.objects.get_or_create(bid=bid)
 
     if request.method == "POST":
-        address_form = AddressForm(request.POST)
+        if finalization.address:
+            address_form = AddressForm(request.POST,instance=finalization.address)
+        else:
+            address_form = AddressForm(request.POST)
         finalization_form = FinalizationForm(request.POST, instance=finalization)
 
         if address_form.is_valid() and finalization_form.is_valid():
