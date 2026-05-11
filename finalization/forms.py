@@ -25,11 +25,14 @@ class FinalizationForm(forms.ModelForm):
     def clean_national_id(self):
         national_id = self.cleaned_data["national_id"]
 
-        if len(national_id) != 10:
-            raise forms.ValidationError("National ID must be 10 digits.")
+        if national_id:
+            national_id = national_id.replace("-", "")
 
-        if not national_id.isdigit():
-            raise forms.ValidationError("National ID must contain only digits.")
+            if len(national_id) != 10:
+                raise forms.ValidationError("National ID must be 10 digits.")
+
+            if not national_id.isdigit():
+                raise forms.ValidationError("National ID must contain only digits.")
 
         return national_id
 

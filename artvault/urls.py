@@ -12,7 +12,7 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("", include("accounts.urls")),
     path("artworks/", include("artworks.urls")),
-    
+    path("finalize/", include("finalization.urls")),
 ]
 
 if settings.DEBUG:
