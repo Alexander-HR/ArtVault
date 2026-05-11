@@ -65,3 +65,21 @@ def seller_list(request):
         "sellers": sellers,
     })
 
+@login_required
+def seller_listed_artworks(request):
+    seller = Seller.objects.filter(user=request.user).first()
+
+    artworks = []
+
+    if seller:
+        artworks = (
+            Artwork.objects
+            .filter(seller=seller)
+            .prefetch_related("images", "bids")
+            .order_by("title")
+        )
+
+    return render(request, "accounts/seller_listed_artworks.html", {
+        "seller": seller,
+        "artworks": artworks,
+    })
