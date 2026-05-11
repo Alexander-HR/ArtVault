@@ -116,17 +116,13 @@
 
                     {% if artwork.sold %}
                         <button class="btn btn-secondary" disabled>Sold</button>
-                        <p class="text-muted mt-2">Bids are not available because this artwork has been sold.</p>
-                    {% elif user_bid %}
-                        <button class="btn btn-primary" disabled>Resubmit a bid</button>
-                        <p class="mt-2">
-                            Current bid status:
-                            <strong>{{ user_bid.get_status_display }}</strong>
-                        </p>
-                        <p class="text-muted">Bid resubmission functionality will be connected later.</p>
+                        <p class="mt-2">Bids are not available because this artwork has been sold.</p>
+                    {% elif user.is_authenticated %}
+                        <button class="btn btn-primary">Submit a bid</button>
+                        <p class="mt-2">Bid submission functionality will be connected later.</p>
                     {% else %}
-                        <button class="btn btn-primary" disabled>Submit a bid</button>
-                        <p class="text-muted mt-2">Bid submission functionality will be connected later.</p>
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary">Login to bid</a>
+                        <p class="mt-2 text-muted">Please log in to submit a bid.</p>
                     {% endif %}
                 </div>
             </div>
