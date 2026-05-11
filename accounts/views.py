@@ -2,21 +2,21 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import get_object_or_404, redirect, render
-
 from artworks.models import Artwork
-from .forms import ProfileForm
 from .models import Profile, Seller
+from .forms import ProfileForm, CustomUserCreationForm
 
-# Create your views here.
 
 
-def register(request):
+def signup(request):
     if request.method == "POST":
-        print(1)
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("login")
     else:
-        return render(request, "user/register.html", {
-            "form": UserCreationForm()
-        })
+        form = CustomUserCreationForm()
+    return render(request, "accounts/signup.html", {"form": form})
 
 @login_required
 def profile_view(request):
