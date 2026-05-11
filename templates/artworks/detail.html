@@ -110,6 +110,45 @@
                 </ul>
             </div>
 
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4>Share this artwork</h4>
+                    <p class="text-muted mb-2">Copy this link to share the artwork detail page.</p>
+
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="artworkShareLink"
+                            value="{{ request.build_absolute_uri }}"
+                            readonly
+                        >
+                        <button
+                            class="btn btn-outline-secondary"
+                            type="button"
+                            onclick="copyArtworkLink()"
+                        >
+                            Copy link
+                        </button>
+                    </div>
+
+                    <small id="copyMessage" class="text-success d-none">Link copied.</small>
+                </div>
+            </div>
+
+            <script>
+                function copyArtworkLink() {
+                    const linkInput = document.getElementById("artworkShareLink");
+                    const copyMessage = document.getElementById("copyMessage");
+
+                    linkInput.select();
+                    linkInput.setSelectionRange(0, 99999);
+                    navigator.clipboard.writeText(linkInput.value);
+
+                    copyMessage.classList.remove("d-none");
+                }
+            </script>
+
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Bidding</h5>
