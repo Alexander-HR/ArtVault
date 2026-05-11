@@ -13,6 +13,8 @@ urlpatterns = [
     path("", include("accounts.urls")),
     path("artworks/", include("artworks.urls")),
     path("finalize/", include("finalization.urls")),
+    path("bids/", include("bids.urls")),
+    
 ]
 
 if settings.DEBUG:
