@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-
+from bids.forms import BidForm
 from .models import Artwork
 from bids.models import Bid
 
@@ -23,10 +23,10 @@ def artwork_detail(request, artwork_id):
         "artwork": artwork,
         "images": artwork.images.all(),
         "user_bid": user_bid,
+        "form": BidForm(artwork=artwork),
     }
 
     return render(request, "artworks/detail.html", context)
-
 
 def index(request):
     artworks = Artwork.objects.prefetch_related("images")
@@ -99,4 +99,3 @@ def index(request):
         "search": search,
         "order_by": order_by,
         "selected_sold": sold,})
-
