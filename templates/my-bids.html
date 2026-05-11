@@ -5,20 +5,21 @@
 <div class="container mt-5">
     <h2 class="text-center">My bids</h2>
     <p>Review and manage bids</p>
-    <ul class="nav nav-underline">
-        <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Active</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">Accepted</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#">Pending</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link disabled" aria-disabled="true">History</a>
-        </li>
-</ul>
+        <ul class="nav nav-underline">
+            <li class="nav-item">
+                <a class="nav-link {% if active_tab == 'active' %}active{% endif %}" href="?tab=active">Active</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if active_tab == 'accepted' %}active{% endif %}" href="?tab=accepted">Accepted</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if active_tab == 'pending' %}active{% endif %}" href="?tab=pending">Pending</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if active_tab == 'history' %}active{% endif %}" href="?tab=history">History</a>
+            </li>
+        </ul>
+
     <div class="container text-center">
         <div class="row">
             <div class="col">
