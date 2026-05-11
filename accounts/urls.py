@@ -4,7 +4,7 @@ from .views import profile_view, seller_profile, seller_list
 from . import views
 
 urlpatterns = [
-    path('register', views.register, name='register'),
+    path('signup', views.signup, name='signup'),
     path('login', LoginView.as_view(template_name='accounts/login.html'), name='login'),
     path('logout', LogoutView.as_view(), name='logout'),
     path("profile/", profile_view, name="profile"),

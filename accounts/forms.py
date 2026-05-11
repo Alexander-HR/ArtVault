@@ -1,5 +1,6 @@
 from django import forms
-from .models import Profile
+from .models import Profile, User
+from django.contrib.auth.forms import UserCreationForm
 
 class ProfileForm(forms.ModelForm):
     name = forms.CharField(
@@ -35,3 +36,8 @@ class ProfileForm(forms.ModelForm):
             profile.save()
 
         return profile
+    
+class CustomUserCreationForm(UserCreationForm):
+    class Meta(UserCreationForm):
+        model = User
+        fields = UserCreationForm.Meta.fields
