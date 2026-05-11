@@ -23,7 +23,7 @@ def artwork_detail(request, artwork_id):
         "artwork": artwork,
         "images": artwork.images.all(),
         "user_bid": user_bid,
-        "form": BidForm(),
+        "form": BidForm(artwork=artwork),
     }
 
     return render(request, "artworks/detail.html", context)

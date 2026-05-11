@@ -10,7 +10,7 @@ def submit_bid(request, artwork_id):
         return redirect("artworks:artwork_detail", artwork_id=artwork_id)
 
     artwork = get_object_or_404(Artwork, pk=artwork_id)
-    form = BidForm(request.POST)
+    form = BidForm(request.POST, artwork=artwork)
     if form.is_valid():
         bid = form.save(commit=False)
         bid.artwork = artwork

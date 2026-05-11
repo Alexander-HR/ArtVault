@@ -9,3 +9,27 @@ class BidForm(forms.ModelForm):
         widgets = {
             "expires_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        self.artwork = kwargs.pop("artwork", None)
+        super().__init__(*args, **kwargs)
+    
+    def clean_amount(self):
+        amount = self.cleaned_data["amount"]
+        if self.artwork:
+            from bids.models import Bid
+            highest = (
+                Bid.objects
+                .filter(artwork=self.artwork)
+                .exclude(status="rejected")
+                .order_by("-amount")
+                .values_list("amount", flat=True)
+                .first()
+            )
+            floor = highest if highest is not None else self.artwork.starting_bid
+            if amount <= floor:
+                raise forms.ValidationError(
+                    f"Your bid must be higher than {floor} ISK."
+                )
+        return amount
+
