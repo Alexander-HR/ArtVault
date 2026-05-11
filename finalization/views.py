@@ -1,7 +1,39 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 
-def contact_step(request):
-    pass
+from bids.models import Bid
+from accounts.models import Address
+from finalization.models import Finalization, Payment
+from finalization.forms import FinalizationForm, PaymentForm, AddressForm
+
+@login_required(login_url="/accounts/login/")
+def contact_step(request, bid_id):
+    bid = get_object_or_404(Bid, id=bid_id)
+
+    finalization, created = Finalization.objects.get_or_create(bid=bid, defaults={"buyer" : request.user})
+
+    if request.method == "POST":
+        address_form = AddressForm(request.POST)
+        finalization_form = FinalizationForm(request.POST, instance=finalization)
+
+    if address_form.is_valid() and finalization_form.is_valid():
+        address = address_form.save()
+        finalization = finalization_form.save(commit=False)
+        finalization.address = address
+        finalization.save()
+
+        return redirect("finalization:payment_step", bid_id=bid.id)
+
+    else:
+        address_form = AddressForm()
+        finalization_form = FinalizationForm(instance = finalization)
+
+        return render(request, "finalization/contact_step.html", {
+            "bid": bid,
+            "address_form": address_form,
+            "finalization_form": finalization_form,
+        })
+
 
 def payment_step(request):
     pass
