@@ -176,7 +176,7 @@
                         </button>
                         <div class="collapse mt-3" id="bid-form-collapse">
                             <div class="card card-body">
-                                <form method="post" action="{% url 'submit_bid' artwork.id %}">
+                                <form method="post" action="{% url 'bids:submit_bid' artwork.id %}">
                                     {% csrf_token %}
                                     <div class="mb-3">
                                         <label for="id_amount" class="form-label">Bid Amount (ISK)</label>
@@ -206,7 +206,7 @@
                         </button>
                         <div class="collapse mt-3" id="bid-form-collapse">
                             <div class="card card-body">
-                                <form method="post" action="{% url 'submit_bid' artwork.id %}">
+                                <form method="post" action="{% url 'bids:submit_bid' artwork.id %}">
                                     {% csrf_token %}
                                     <div class="mb-3">
                                         <label for="id_amount" class="form-label">Bid Amount (ISK)</label>

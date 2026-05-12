@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "dashboards",
     "finalization",
     "storages",
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
@@ -127,26 +128,9 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-AZURE_ACCOUNT_NAME = config('AZURE_ACCOUNT_NAME', default='')
-AZURE_ACCOUNT_KEY = config('AZURE_ACCOUNT_KEY', default='')
-AZURE_CONTAINER = 'media'
 
-STORAGES = {
-    'default': {
-        'BACKEND': 'storages.backends.azure_storage.AzureStorage',
-        'OPTIONS': {
-            'account_name': AZURE_ACCOUNT_NAME,
-            'account_key': AZURE_ACCOUNT_KEY,
-            'azure_container': AZURE_CONTAINER,
-            'overwrite_files': False,
-        },
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
-
-MEDIA_URL = f"https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net/{AZURE_CONTAINER}/"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Make error messages from bootstrap work with django
 MESSAGE_TAGS = {
