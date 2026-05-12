@@ -7,20 +7,34 @@
 
     {% if seller.cover_image %}
         <div class="mb-4">
-            <img src="{% static seller.cover_image %}"
-                 class="img-fluid rounded border w-100"
-                 alt="{{ seller.user.username }} cover image"
-                 style="max-height: 320px; object-fit: cover;">
+            {% if seller.cover_image|slice:":7" == "/media/" %}
+                <img src="{{ seller.cover_image }}"
+                     class="img-fluid rounded border w-100"
+                     alt="{{ seller.user.username }} cover image"
+                     style="max-height: 320px; object-fit: cover;">
+            {% else %}
+                <img src="{% static seller.cover_image %}"
+                     class="img-fluid rounded border w-100"
+                     alt="{{ seller.user.username }} cover image"
+                     style="max-height: 320px; object-fit: cover;">
+            {% endif %}
         </div>
     {% endif %}
 
     <div class="row">
         <div class="col-md-4">
             {% if seller.logo %}
-                <img src="{% static seller.logo %}"
-                     class="rounded border mb-3"
-                     alt="{{ seller.user.username }} logo"
-                     style="width: 180px; height: 180px; object-fit: cover;">
+                {% if seller.logo|slice:":7" == "/media/" %}
+                    <img src="{{ seller.logo }}"
+                         class="rounded border mb-3"
+                         alt="{{ seller.user.username }} logo"
+                         style="width: 180px; height: 180px; object-fit: cover;">
+                {% else %}
+                    <img src="{% static seller.logo %}"
+                         class="rounded border mb-3"
+                         alt="{{ seller.user.username }} logo"
+                         style="width: 180px; height: 180px; object-fit: cover;">
+                {% endif %}
             {% else %}
                 <div class="bg-light border rounded d-flex align-items-center justify-content-center mb-3"
                      style="width: 180px; height: 180px;">
