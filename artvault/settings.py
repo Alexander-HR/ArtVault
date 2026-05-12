@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "dashboards",
     "finalization",
     "storages"
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
