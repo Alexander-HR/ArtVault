@@ -1,23 +1,26 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block content %}
 <div class="container my-5">
     <a href="{% url 'home' %}" class="btn btn-outline-secondary mb-4">← Back to Home</a>
 
-    {% if seller.cover_image %}
+    {% if seller.cover_image and seller.cover_image.name %}
         <div class="mb-4">
-            <img src="{% static seller.cover_image %}"
-                 class="img-fluid rounded border w-100"
-                 alt="{{ seller.user.username }} cover image"
-                 style="max-height: 320px; object-fit: cover;">
+        <img src="{{ seller.cover_image.url }}"
+             class="img-fluid rounded border w-100"
+             alt="{{ seller.user.username }} cover image"
+             style="max-height: 320px; object-fit: cover;">
+        </div>
+    {% else %}
+        <div class="bg-light border-bottom d-flex align-items-center justify-content-center" style="height: 220px;">
+            <span class="text-muted">Cover Image</span>
         </div>
     {% endif %}
 
     <div class="row">
         <div class="col-md-4">
-            {% if seller.logo %}
-                <img src="{% static seller.logo %}"
+            {% if seller.logo and seller.logo.name %}
+                <img src="{{ seller.logo.url }}"
                      class="rounded border mb-3"
                      alt="{{ seller.user.username }} logo"
                      style="width: 180px; height: 180px; object-fit: cover;">
@@ -66,18 +69,19 @@
                 {% for artwork in artworks %}
                     <div class="col-md-6 mb-3">
                         <div class="card h-100">
-                            {% if artwork.images.first %}
-                                <img src="{% static artwork.images.first.image_path %}"
-                                     class="card-img-top"
-                                     alt="{{ artwork.title }}"
-                                     style="height: 220px; object-fit: cover;">
-                            {% else %}
-                                <div class="bg-light border-bottom d-flex align-items-center justify-content-center"
-                                     style="height: 220px;">
-                                    <span class="text-muted">Artwork Image</span>
-                                </div>
-                            {% endif %}
-
+                            {% with first_image=artwork.images.first %}
+                                {% if first_image and first_image.image and first_image.image.name %}
+                                    <img src="{{ first_image.image.url }}"
+                                         class="card-img-top"
+                                         alt="{{ artwork.title }}"
+                                         style="height: 220px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-light border-bottom d-flex align-items-center justify-content-center"
+                                         style="height: 220px;">
+                                        <span class="text-muted">Artwork Image</span>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
                             <div class="card-body">
                                 {% if artwork.sold %}
                                     <span class="badge bg-danger mb-2">Sold</span>

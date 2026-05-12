@@ -5,7 +5,7 @@
     <h2 class="text-center">Profile</h2>
 
     <div class="text-center mt-4">
-        {% if profile.image %}
+        {% if profile.image and profile.image.name %}
             <img src="{{ profile.image.url }}"
                  alt="Profile Image"
                  width="150"
@@ -38,7 +38,19 @@
             {% endfor %}
         </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div>
-{% endblock %}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
+            {% if not has_seller_profile %}
+                <div class="mt-4">
+                    <a href="{% url 'create_seller_profile' %}" class="btn btn-outline-primary">
+                        Create seller profile
+                    </a>
+                </div>
+            {% else %}
+                <div class="mt-4">
+                    <p class="text-success">You already have a seller profile.</p>
+                </div>
+            {% endif %}
+        </div>
+        {% endblock %}
