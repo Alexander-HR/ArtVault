@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "bids",
     "dashboards",
     "finalization",
-    "storages"
+    "storages",
 ]
 
 MIDDLEWARE = [
