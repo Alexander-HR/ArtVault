@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 
@@ -9,6 +10,12 @@ from finalization.forms import FinalizationForm, PaymentForm, AddressForm
 @login_required
 def contact_step(request, bid_id):
     bid = get_object_or_404(Bid, id=bid_id)
+
+    if bid.status != "accepted":
+        messages.error(request,
+            "Only bids that have status 'accepted' can be finalized."
+        )
+        return redirect("bids:my_bids")
 
     finalization, created = Finalization.objects.get_or_create(bid=bid)
 
@@ -45,6 +52,12 @@ def payment_step(request, bid_id):
     bid = get_object_or_404(Bid, id=bid_id)
     finalization = get_object_or_404(Finalization, bid=bid)
 
+    if bid.status != "accepted":
+        messages.error(request,
+            "Only bids that have status 'Accepted' can be finalized."
+        )
+        return redirect("bids:my_bids")
+
     if request.method == "POST":
         if finalization.payment:
             payment_form = PaymentForm(request.POST,instance=finalization.payment)
@@ -73,6 +86,11 @@ def payment_step(request, bid_id):
 def review_step(request, bid_id):
     bid = get_object_or_404(Bid, id=bid_id)
     finalization = get_object_or_404(Finalization, bid=bid)
+    if bid.status != "accepted":
+        messages.error(request,
+            "Only bids that have status 'Accepted' can be finalized."
+        )
+        return redirect("bids:my_bids")
 
     if request.method == "POST":
         bid.status = "finalized"
@@ -95,6 +113,11 @@ def review_step(request, bid_id):
 
 def confirmation_step(request, bid_id):
         bid = get_object_or_404(Bid, id=bid_id)
+        if bid.status != "finalized":
+            messages.error(request,
+                           f"Invalid path for bid with ID {bid.id}."
+                           )
+            return redirect("bids:my_bids")
 
         return render(request, "finalizations/confirmation_step.html", {
             "bid": bid,
