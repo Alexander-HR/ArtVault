@@ -24,7 +24,7 @@
 
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">My Bids</a>
+                        <a class="nav-link" href="{% url 'bids:my_bids' %}">My Bids</a>
                     </li>
 
                     <li class="nav-item">

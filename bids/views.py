@@ -4,8 +4,8 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from artworks.models import Artwork
 from accounts.models import Seller
+from artworks.models import Artwork
 from .forms import BidForm
 from .models import Bid
 
@@ -28,6 +28,24 @@ def submit_bid(request, artwork_id):
         messages.error(request, "Invalid bid. Please check the amount.")
 
     return redirect("artworks:artwork_detail", artwork_id=artwork_id)
+
+
+@login_required
+def my_bids(request):
+    tab = request.GET.get("tab", "active")
+    bids = request.user.bids.select_related("artwork").order_by("-created_at")
+
+    if tab == "active":
+        bids = bids.filter(expires_at__gt=timezone.now())
+    elif tab == "accepted":
+        bids = bids.filter(status__in=["accepted", "contingent"])
+    elif tab == "pending":
+        bids = bids.filter(status="pending")
+
+    return render(request, "my-bids.html", {
+        "bids": bids,
+        "active_tab": tab,
+    })
 
 
 @login_required
@@ -54,7 +72,7 @@ def seller_bids_overview(request):
 @transaction.atomic
 def accept_bid(request, bid_id):
     if request.method != "POST":
-        return redirect("seller_bids_overview")
+        return redirect("bids:seller_bids_overview")
 
     seller = Seller.objects.filter(user=request.user).first()
 
@@ -72,15 +90,15 @@ def accept_bid(request, bid_id):
 
     if artwork.sold:
         messages.error(request, "This artwork has already been sold.")
-        return redirect("seller_bids_overview")
+        return redirect("bids:seller_bids_overview")
 
     if bid.status != "pending":
         messages.error(request, "Only pending bids can be accepted.")
-        return redirect("seller_bids_overview")
+        return redirect("bids:seller_bids_overview")
 
     if bid.expires_at < timezone.now():
         messages.error(request, "This bid has expired and cannot be accepted.")
-        return redirect("seller_bids_overview")
+        return redirect("bids:seller_bids_overview")
 
     bid.status = "accepted"
     bid.save()
@@ -89,4 +107,4 @@ def accept_bid(request, bid_id):
     artwork.save()
 
     messages.success(request, "Bid accepted successfully. The artwork is now marked as sold.")
-    return redirect("seller_bids_overview")
+    return redirect("bids:seller_bids_overview")

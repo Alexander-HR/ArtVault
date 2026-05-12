@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Saved successfully - payment step will be implemented later - temporary redirect to review</h1>
+
+    <p>Your contact information was saved.</p>
+
+    <h3>Bid</h3>
+    <p>Bid ID: {{ bid.id }}</p>
+    <p>Bid amount: {{ bid.amount }} ISK</p>
+
+    <h3>Contact information</h3>
+    <p>Street: {{ finalization.address.street_name }}</p>
+    <p>City: {{ finalization.address.city }}</p>
+    <p>Postal code: {{ finalization.address.postal_code }}</p>
+    <p>Country: {{ finalization.address.country }}</p>
+    <p>National ID: {{ finalization.national_id }}</p>
+
+    <a href="{% url 'finalization:contact_step' bid.id %}" class="btn btn-outline-secondary">
+        Back
+    </a>
+</div>
+{% endblock %}

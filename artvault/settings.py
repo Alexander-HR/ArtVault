@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "bids",
     "dashboards",
     "finalization",
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
