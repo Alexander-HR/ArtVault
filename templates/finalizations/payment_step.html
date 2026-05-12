@@ -1,5 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h1>Finalize Bid</h1>
+            <h3>Payment Information</h3>
+        </div>
 
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                <h4 class="mb-3">Payment</h4>
+                <div class="mb-3">
+                    {{ payment_form.as_p }}
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                     <a href="{% url 'finalization:contact_step' bid.id %}" class="btn btn-outline-secondary">
+                        Back
+                    </a>
+                    <a href="{% url 'finalization:review_step' bid.id %}" class="btn btn-outline-secondary">
+                        Review and Confirm
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -25,7 +25,7 @@ def contact_step(request, bid_id):
             finalization.address = address
             finalization.save()
 
-            return redirect("finalization:review_step", bid_id=bid.id)
+            return redirect("finalization:payment_step", bid_id=bid.id)
 
     else:
         if finalization.address:
@@ -40,9 +40,34 @@ def contact_step(request, bid_id):
         "finalization_form": finalization_form,
     })
 
+@login_required
+def payment_step(request, bid_id):
+    bid = get_object_or_404(Bid, id=bid_id)
+    finalization = get_object_or_404(Finalization, bid=bid)
 
-def payment_step(request):
-    pass
+    if request.method == "POST":
+        if finalization.payment:
+            payment_form = PaymentForm(request.POST,instance=finalization.payment)
+        else:
+            payment_form = PaymentForm(request.POST)
+
+        if payment_form.is_valid():
+            payment = payment_form.save()
+            finalization.payment = payment
+            finalization.save()
+
+            return redirect("finalization:review_step", bid_id=bid.id)
+
+    else:
+        if finalization.payment:
+            payment_form = PaymentForm(instance=finalization.payment)
+        else:
+            payment_form = PaymentForm()
+
+    return render(request, "finalizations/payment_step.html", {
+        "bid": bid,
+        "payment_form": payment_form,
+    })
 
 @login_required
 def review_step(request, bid_id):
