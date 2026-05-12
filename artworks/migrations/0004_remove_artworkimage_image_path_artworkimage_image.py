@@ -10,13 +10,18 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='artworkimage',
-            name='image_path',
+        migrations.RenameField(
+            model_name="artworkimage",
+            old_name="image_path",
+            new_name="image",
         ),
-        migrations.AddField(
-            model_name='artworkimage',
-            name='image',
-            field=models.ImageField(blank=True, null=True, upload_to='artwork_images'),
+        migrations.AlterField(
+            model_name="artworkimage",
+            name="image",
+            field=models.ImageField(
+                upload_to="artwork_images",
+                blank=True,
+                null=True,
+            ),
         ),
     ]
