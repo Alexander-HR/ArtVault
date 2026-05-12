@@ -74,6 +74,9 @@ def review_step(request, bid_id):
     bid = get_object_or_404(Bid, id=bid_id)
     finalization = get_object_or_404(Finalization, bid=bid)
 
+    if request.method == "POST":
+        return redirect("finalization:confirmation_step",bid_id=bid.id)
+
     return render(request, "finalizations/review_step.html", {
         "bid": bid,
         "finalization": finalization,
