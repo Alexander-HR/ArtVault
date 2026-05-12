@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block content %}
     <h2 class="mb-4">Artwork Sellers</h2>
@@ -7,16 +6,10 @@
             {% for seller in sellers %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
-                    {% if seller.logo %}
-                        {% if seller.logo|slice:":7" == "/media/" %}
-                            <img src="{{ seller.logo }}"
-                                 class="card-img-top artwork-thumbnail"
-                                 alt="{{ seller.user.username }}">
-                        {% else %}
-                            <img src="{% static seller.logo %}"
-                                 class="card-img-top artwork-thumbnail"
-                                 alt="{{ seller.user.username }}">
-                        {% endif %}
+                    {% if seller.logo and seller.logo.name %}
+                        <img src="{{ seller.logo.url }}"
+                             class="card-img-top artwork-thumbnail"
+                             alt="{{ seller.user.username }}">
                     {% else %}
                         <div class="bg-light border-bottom d-flex align-items-center justify-content-center"
                              style="height: 220px;">

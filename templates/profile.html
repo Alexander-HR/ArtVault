@@ -5,7 +5,7 @@
     <h2 class="text-center">Profile</h2>
 
     <div class="text-center mt-4">
-        {% if profile.image %}
+        {% if profile.image and profile.image.name %}
             <img src="{{ profile.image.url }}"
                  alt="Profile Image"
                  width="150"
