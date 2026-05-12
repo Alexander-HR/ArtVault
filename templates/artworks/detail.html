@@ -79,6 +79,12 @@
                         <strong>Starting bid price:</strong> {{ artwork.starting_bid }} ISK
                     </li>
                     <li class="list-group-item">
+                        {% if artwork.highest_bid %}
+                            <p>Current highest bid: {{ artwork.highest_bid }} ISK</p>
+                        {% endif %}
+
+                    </li>
+                    <li class="list-group-item">
                         <strong>Status:</strong>
                         {% if artwork.sold %}
                             Sold
