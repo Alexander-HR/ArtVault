@@ -54,8 +54,18 @@
         {% for artwork in artworks %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
-                    <img src="{{ artwork.images.first.image.url }}" class="card-img-top artwork-thumbnail" alt="{{ artwork.title }}">
-
+                    {% with first_image=artwork.images.first %}
+                        {% if first_image and first_image.image and first_image.image.name %}
+                            <img src="{{ first_image.image.url }}"
+                                 class="card-img-top artwork-thumbnail"
+                                 alt="{{ artwork.title }}">
+                        {% else %}
+                            <div class="bg-light border rounded d-flex align-items-center justify-content-center mb-3"
+                                 style="height: 420px;">
+                                <span class="text-muted">Artwork Image Placeholder</span>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
                     <div class="card-body">
                          {% if artwork.sold %}
                             <span class="badge bg-danger">Sold</span>
