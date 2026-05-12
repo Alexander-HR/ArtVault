@@ -75,6 +75,17 @@ def review_step(request, bid_id):
     finalization = get_object_or_404(Finalization, bid=bid)
 
     if request.method == "POST":
+        bid.status = "finalized"
+        bid.save()
+
+        artwork = bid.artwork
+        artwork.sold = True
+        artwork.save()
+
+        Bid.objects.filter(artwork=artwork).exclude(id=bid.id).update(
+            status="rejected"
+        )
+
         return redirect("finalization:confirmation_step",bid_id=bid.id)
 
     return render(request, "finalizations/review_step.html", {
@@ -82,5 +93,9 @@ def review_step(request, bid_id):
         "finalization": finalization,
     })
 
-def confirmation_step(request):
-    pass
+def confirmation_step(request, bid_id):
+        bid = get_object_or_404(Bid, id=bid_id)
+
+        return render(request, "finalizations/confirmation_step.html", {
+            "bid": bid,
+        })
