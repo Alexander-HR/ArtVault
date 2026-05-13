@@ -7,10 +7,14 @@ from bids.forms import BidForm
 from bids.models import Bid
 from .forms import ArtworkForm
 from .models import Artwork, ArtworkImage
+from django.db.models import Max, Q
+
 
 def artwork_detail(request, artwork_id):
     artwork = get_object_or_404(
-        Artwork.objects.prefetch_related("images", "bids"),
+        Artwork.objects.prefetch_related("images", "bids").annotate(
+            highest_bid=Max('bids__amount', filter=~Q(bids__status='rejected'))
+        ),
         id=artwork_id,
     )
 
@@ -33,7 +37,9 @@ def artwork_detail(request, artwork_id):
     return render(request, "artworks/detail.html", context)
 
 def index(request):
-    artworks = Artwork.objects.prefetch_related("images")
+    artworks = Artwork.objects.prefetch_related("images").annotate(
+        highest_bid=Max('bids__amount', filter=~Q(bids__status='rejected'))
+    )
 
     search = request.GET.get("search")
     medium = request.GET.get("medium")
