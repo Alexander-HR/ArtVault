@@ -6,7 +6,7 @@ from accounts.models import Seller
 from bids.forms import BidForm
 from bids.models import Bid
 from .forms import ArtworkForm
-from .models import Artwork, ArtworkImage
+from .models import Artwork, ArtworkImage, Favorite
 from django.db.models import Max, Q
 
 
@@ -19,6 +19,7 @@ def artwork_detail(request, artwork_id):
     )
 
     user_bid = None
+    is_favorited = False
 
     if request.user.is_authenticated:
         user_bid = (
@@ -26,6 +27,10 @@ def artwork_detail(request, artwork_id):
             .order_by("-created_at")
             .first()
         )
+
+        is_favorited = Favorite.object.filter(
+            user=request.user, artwork=artwork
+        ).exists()
 
     context = {
         "artwork": artwork,
@@ -119,3 +124,26 @@ def create_artwork(request):
     return render(request, "artworks/create_artwork.html", {
         "form": form
     })
+
+@login_required
+def favorites(request):
+    favorite_artworks = Artwork.objects.filter(favorited_by__user=request.user).prefetch_related("images")
+
+    return render(request, "artworks/favorites.html", {
+        "artworks": favorite_artworks
+        })
+
+def toggle_favorite(request, artwork_id):
+    if request.method != "POST":
+        return redirect("artworks:artwork_detail", artwork_id=artwork_id)
+    
+    artwork = get_object_or_404(Artwork, id=artwork_id)
+    favorite, created = Favorite.objects.get_or_create(
+        user=request.user,
+        artwork=artwork,
+    )
+
+    if not created:
+        favorite.delete()
+
+    return redirect("artworks:artwork_detail", artwork_id=artwork_id)
