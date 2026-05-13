@@ -1,7 +1,12 @@
-from django.shortcuts import get_object_or_404, render
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, render, redirect
+
+from accounts.models import Seller
 from bids.forms import BidForm
-from .models import Artwork
 from bids.models import Bid
+from .forms import ArtworkForm
+from .models import Artwork, ArtworkImage
 from django.db.models import Max, Q
 
 
@@ -70,3 +75,47 @@ def index(request):
         "order_by": order_by,
         "selected_sold": sold,})
 
+
+@login_required
+def create_artwork(request):
+    try:
+        seller = request.user.seller
+    except Seller.DoesNotExist:
+        messages.error(request, "You must create a seller profile first.")
+        return redirect("profile")
+
+    if request.method == "POST":
+        form = ArtworkForm(request.POST)
+
+        if form.is_valid():
+            artwork = form.save(commit=False)
+            artwork.seller = seller
+            artwork.save()
+
+            images = request.FILES.getlist("images")
+
+            try:
+                for image in images:
+                    ArtworkImage.objects.create(
+                        artwork=artwork,
+                        image=image
+                    )
+
+                messages.success(request, "Artwork listed successfully.")
+                return redirect("artworks:index")
+
+            except Exception:
+                messages.error(
+                    request,
+                    "Image upload failed. Please try again."
+                )
+
+        else:
+            messages.error(request, "Please correct the errors below.")
+
+    else:
+        form = ArtworkForm()
+
+    return render(request, "artworks/create_artwork.html", {
+        "form": form
+    })
