@@ -1,9 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
+from django.utils import timezone
+
 from artworks.models import Artwork
 from .forms import BidForm
-from django.utils import timezone
+from .models import Bid
+from accounts.models import Seller
+
 
 @login_required
 def submit_bid(request, artwork_id):
@@ -12,6 +16,7 @@ def submit_bid(request, artwork_id):
 
     artwork = get_object_or_404(Artwork, pk=artwork_id)
     form = BidForm(request.POST, artwork=artwork)
+
     if form.is_valid():
         bid = form.save(commit=False)
         bid.artwork = artwork
@@ -23,10 +28,6 @@ def submit_bid(request, artwork_id):
 
     return redirect("artworks:artwork_detail", artwork_id=artwork_id)
 
-@login_required
-def my_bids(request):
-    bids = request.user.bids.select_related("artwork").order_by("-created_at")
-    return render(request, "my-bids.html", {"bids":bids})
 
 @login_required
 def my_bids(request):
@@ -39,6 +40,30 @@ def my_bids(request):
         bids = bids.filter(status__in=['accepted', 'contingent'])
     elif tab == 'pending':
         bids = bids.filter(status='pending')
-    # history: no filter
 
-    return render(request, "my-bids.html", {"bids": bids, "active_tab": tab})
+    return render(request, "my-bids.html", {
+        "bids": bids,
+        "active_tab": tab
+    })
+
+
+@login_required
+def seller_dashboard(request):
+
+    seller = get_object_or_404(Seller, user=request.user)
+
+    current_bids = Bid.objects.filter(
+        artwork__seller=seller,
+        artwork__sold=False
+    ).select_related("artwork", "buyer")
+
+    previous_sales = Bid.objects.filter(
+        artwork__seller=seller,
+        artwork__sold=True,
+        status="finalized"
+    ).select_related("artwork", "buyer")
+
+    return render(request, "bids/seller_bids_overview.html", {
+        "current_bids": current_bids,
+        "previous_sales": previous_sales,
+    })
