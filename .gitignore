@@ -432,4 +432,14 @@ FodyWeavers.xsd
 .DS_Store
 
 # The venvs
-.venv
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+.idea/
+media/
+
+#database related files
+db.sqlite3
+verklegt_namskeid_db

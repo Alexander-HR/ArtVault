@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Profile</h2>
+
+    <div class="text-center mt-4">
+        {% if profile.image and profile.image.name %}
+            <img src="{{ profile.image.url }}"
+                 alt="Profile Image"
+                 width="150"
+                 height="150"
+                 class="rounded-circle object-fit-cover">
+        {% else %}
+            <div class="bg-light border rounded-circle d-inline-flex align-items-center justify-content-center"
+                 style="width:150px; height:150px;">
+                <span class="text-muted small">No image</span>
+            </div>
+        {% endif %}
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="mt-4">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            {{ form.name }}
+            {% for error in form.name.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Profile image</label>
+            {{ form.image }}
+            {% for error in form.image.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
+            {% if not has_seller_profile %}
+                <div class="mt-4">
+                    <a href="{% url 'create_seller_profile' %}" class="btn btn-outline-primary">
+                        Create seller profile
+                    </a>
+                </div>
+            {% else %}
+                <div class="mt-4">
+                    <p class="text-success">You already have a seller profile.</p>
+                </div>
+            {% endif %}
+        </div>
+        {% endblock %}
