@@ -49,8 +49,11 @@ def my_bids(request):
 
 @login_required
 def seller_dashboard(request):
-
-    seller = get_object_or_404(Seller, user=request.user)
+    try:
+        seller = Seller.objects.get(user=request.user)
+    except Seller.DoesNotExist:
+        messages.error(request, "You need to create a seller profile before accessing the seller dashboard.")
+        return redirect("create_seller_profile")
 
     current_bids = Bid.objects.filter(
         artwork__seller=seller,
