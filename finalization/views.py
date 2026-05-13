@@ -1,3 +1,124 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+from bids.models import Bid
+from accounts.models import Address
+from finalization.models import Finalization, Payment
+from finalization.forms import FinalizationForm, PaymentForm, AddressForm
+
+@login_required
+def contact_step(request, bid_id):
+    bid = get_object_or_404(Bid, id=bid_id)
+
+    if bid.status != "accepted":
+        messages.error(request,
+            "Only bids that have status 'accepted' can be finalized."
+        )
+        return redirect("bids:my_bids")
+
+    finalization, created = Finalization.objects.get_or_create(bid=bid)
+
+    if request.method == "POST":
+        if finalization.address:
+            address_form = AddressForm(request.POST,instance=finalization.address)
+        else:
+            address_form = AddressForm(request.POST)
+        finalization_form = FinalizationForm(request.POST, instance=finalization)
+
+        if address_form.is_valid() and finalization_form.is_valid():
+            address = address_form.save()
+            finalization = finalization_form.save(commit=False)
+            finalization.address = address
+            finalization.save()
+
+            return redirect("finalization:payment_step", bid_id=bid.id)
+
+    else:
+        if finalization.address:
+            address_form = AddressForm(instance=finalization.address)
+        else:
+            address_form = AddressForm()
+        finalization_form = FinalizationForm(instance = finalization)
+
+    return render(request, "finalizations/contact_step.html", {
+        "bid": bid,
+        "address_form": address_form,
+        "finalization_form": finalization_form,
+    })
+
+@login_required
+def payment_step(request, bid_id):
+    bid = get_object_or_404(Bid, id=bid_id)
+    finalization = get_object_or_404(Finalization, bid=bid)
+
+    if bid.status != "accepted":
+        messages.error(request,
+            "Only bids that have status 'Accepted' can be finalized."
+        )
+        return redirect("bids:my_bids")
+
+    if request.method == "POST":
+        if finalization.payment:
+            payment_form = PaymentForm(request.POST,instance=finalization.payment)
+        else:
+            payment_form = PaymentForm(request.POST)
+
+        if payment_form.is_valid():
+            payment = payment_form.save()
+            finalization.payment = payment
+            finalization.save()
+
+            return redirect("finalization:review_step", bid_id=bid.id)
+
+    else:
+        if finalization.payment:
+            payment_form = PaymentForm(instance=finalization.payment)
+        else:
+            payment_form = PaymentForm()
+
+    return render(request, "finalizations/payment_step.html", {
+        "bid": bid,
+        "payment_form": payment_form,
+    })
+
+@login_required
+def review_step(request, bid_id):
+    bid = get_object_or_404(Bid, id=bid_id)
+    finalization = get_object_or_404(Finalization, bid=bid)
+    if bid.status != "accepted":
+        messages.error(request,
+            "Only bids that have status 'Accepted' can be finalized."
+        )
+        return redirect("bids:my_bids")
+
+    if request.method == "POST":
+        bid.status = "finalized"
+        bid.save()
+
+        artwork = bid.artwork
+        artwork.sold = True
+        artwork.save()
+
+        Bid.objects.filter(artwork=artwork).exclude(id=bid.id).update(
+            status="rejected"
+        )
+
+        return redirect("finalization:confirmation_step",bid_id=bid.id)
+
+    return render(request, "finalizations/review_step.html", {
+        "bid": bid,
+        "finalization": finalization,
+    })
+
+def confirmation_step(request, bid_id):
+        bid = get_object_or_404(Bid, id=bid_id)
+        if bid.status != "finalized":
+            messages.error(request,
+                           f"Invalid path for bid with ID {bid.id}."
+                           )
+            return redirect("bids:my_bids")
+
+        return render(request, "finalizations/confirmation_step.html", {
+            "bid": bid,
+        })

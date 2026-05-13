@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+
+    <h1 class="mb-4">Add New Artwork</h1>
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        <div class="card mb-4">
+            <div class="card-header">
+                Artwork Information
+            </div>
+
+            <div class="card-body">
+
+                <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    {{ form.title }}
+                    {% for error in form.title.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Medium</label>
+                    {{ form.medium }}
+                    {% for error in form.medium.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Style</label>
+                    {{ form.style }}
+                    {% for error in form.style.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Starting Bid Price</label>
+                    {{ form.starting_bid }}
+                    {% for error in form.starting_bid.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Dimensions</label>
+                    {{ form.dimensions }}
+                    {% for error in form.dimensions.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Year Created</label>
+                    {{ form.year_created }}
+                    {% for error in form.year_created.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Edition</label>
+                    {{ form.edition }}
+                    {% for error in form.edition.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Provenance</label>
+                    {{ form.provenance }}
+                    {% for error in form.provenance.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Artwork Images</label>
+                    <input
+                        type="file"
+                        name="images"
+                        class="form-control"
+                        multiple
+                        accept="image/*"
+                    >
+                </div>
+
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Create Artwork
+        </button>
+
+        <a href="{% url 'artworks:index' %}" class="btn btn-outline-secondary">
+            Cancel
+        </a>
+
+    </form>
+</div>
+{% endblock %}

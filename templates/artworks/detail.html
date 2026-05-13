@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block content %}
+{% load humanize %}
 <div class="container my-5">
     <a href="{% url 'home' %}" class="btn btn-outline-secondary mb-4">← Back to Home</a>
 
@@ -11,16 +11,22 @@
                 <div id="artworkImages" class="carousel slide mb-3" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         {% for image in images %}
-                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                <img src="{% static image.image_path %}"
-                                     class="d-block w-100 rounded border"
-                                     alt="{{ artwork.title }}"
-                                     style="max-height: 420px; object-fit: cover;">
-                            </div>
+                            {% if image.image and image.image.name %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <img src="{{ image.image.url }}"
+                                         class="d-block w-100 rounded border"
+                                         alt="{{ artwork.title }}"
+                                         style="max-height: 420px; object-fit: cover;">
+                                </div>
+                            {% else %}
+                                <div class="bg-light border rounded d-flex align-items-center justify-content-center mb-3" style="height: 420px;">
+                                    <span class="text-muted">Artwork Image Placeholder</span>
+                                </div>
+                            {% endif %}
                         {% endfor %}
                     </div>
 
-                    {% if images|length > 1 %}
+                    {% if images.count > 1 %}
                         <button class="carousel-control-prev" type="button" data-bs-target="#artworkImages" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Previous</span>
@@ -76,7 +82,13 @@
                         <strong>Style:</strong> {{ artwork.get_style_display }}
                     </li>
                     <li class="list-group-item">
-                        <strong>Starting bid price:</strong> {{ artwork.starting_bid }} ISK
+                        <strong>Starting bid price:</strong> {{ artwork.starting_bid | floatformat:0 | intcomma }} ISK
+                    </li>
+                    <li class="list-group-item">
+                        {% if artwork.highest_bid %}
+                            <strong>Current highest bid:</strong> {{ artwork.highest_bid | floatformat:0 | intcomma }} ISK
+                        {% endif %}
+
                     </li>
                     <li class="list-group-item">
                         <strong>Status:</strong>
@@ -110,23 +122,111 @@
                 </ul>
             </div>
 
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4>Share this artwork</h4>
+                    <p class="text-muted mb-2">Copy this link to share the artwork detail page.</p>
+
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="artworkShareLink"
+                            value="{{ request.build_absolute_uri }}"
+                            readonly
+                        >
+                        <button
+                            class="btn btn-outline-secondary"
+                            type="button"
+                            onclick="copyArtworkLink()"
+                        >
+                            Copy link
+                        </button>
+                    </div>
+
+                    <small id="copyMessage" class="text-success d-none">Link copied.</small>
+                </div>
+            </div>
+
+            <script>
+                function copyArtworkLink() {
+                    const linkInput = document.getElementById("artworkShareLink");
+                    const copyMessage = document.getElementById("copyMessage");
+
+                    linkInput.select();
+                    linkInput.setSelectionRange(0, 99999);
+                    navigator.clipboard.writeText(linkInput.value);
+
+                    copyMessage.classList.remove("d-none");
+                }
+            </script>
+
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Bidding</h5>
 
                     {% if artwork.sold %}
                         <button class="btn btn-secondary" disabled>Sold</button>
-                        <p class="text-muted mt-2">Bids are not available because this artwork has been sold.</p>
+                        <p class="mt-2">Bids are not available because this artwork has been sold.</p>
+                    {% elif not user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary">Login to bid</a>
+                        <p class="mt-2 text-muted">Please log in to submit a bid.</p>
                     {% elif user_bid %}
-                        <button class="btn btn-primary" disabled>Resubmit a bid</button>
+                        <button 
+                            class="btn btn-primary" 
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#bid-form-collapse"
+                            aria-expanded="false"
+                            aria-controls="bid-form-collapse">
+                            Resubmit bid
+                        </button>
+                        <div class="collapse mt-3" id="bid-form-collapse">
+                            <div class="card card-body">
+                                <form method="post" action="{% url 'bids:submit_bid' artwork.id %}">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="id_amount" class="form-label">Bid Amount (ISK)</label>
+                                        {{ form.amount }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="id_expires_at" class="form-label">Bid Expiry</label>
+                                        {{ form.expires_at }}
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Resubmit Bid</button>
+                                </form>
+                            </div>
+                        </div>
                         <p class="mt-2">
                             Current bid status:
                             <strong>{{ user_bid.get_status_display }}</strong>
                         </p>
-                        <p class="text-muted">Bid resubmission functionality will be connected later.</p>
                     {% else %}
-                        <button class="btn btn-primary" disabled>Submit a bid</button>
-                        <p class="text-muted mt-2">Bid submission functionality will be connected later.</p>
+                        <button 
+                            class="btn btn-primary" 
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#bid-form-collapse"
+                            aria-expanded="false"
+                            aria-controls="bid-form-collapse">
+                            Place a Bid
+                        </button>
+                        <div class="collapse mt-3" id="bid-form-collapse">
+                            <div class="card card-body">
+                                <form method="post" action="{% url 'bids:submit_bid' artwork.id %}">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="id_amount" class="form-label">Bid Amount (ISK)</label>
+                                        {{ form.amount }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="id_expires_at" class="form-label">Bid Expiry</label>
+                                        {{ form.expires_at }}
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Submit Bid</button>
+                                </form>
+                            </div>
+                        </div>
                     {% endif %}
                 </div>
             </div>

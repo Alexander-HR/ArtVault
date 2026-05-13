@@ -36,6 +36,6 @@ class Artwork(models.Model):
 class ArtworkImage(models.Model):
     id = models.AutoField(primary_key=True)
     artwork = models.ForeignKey(Artwork, on_delete=models.CASCADE, related_name='images')
-    image_path = models.CharField(max_length=255)
+    image = models.ImageField(upload_to="artwork_images", blank=True, null=True)
     def __str__(self):
         return f'Image for {self.artwork.title}'
