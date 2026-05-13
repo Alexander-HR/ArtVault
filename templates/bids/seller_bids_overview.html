@@ -29,7 +29,7 @@
                             <td>{{ bid.get_status_display }}</td>
                             <td>
                                 {% if bid.status == "pending" and not bid.artwork.sold %}
-                                    <form method="post" action="{% url 'accept_bid' bid.id %}">
+                                    <form method="post" action="{% url 'bids:accept_bid' bid.id %}">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-success btn-sm">
                                             Accept
