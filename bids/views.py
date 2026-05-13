@@ -4,10 +4,12 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from accounts.models import Seller
+from accounts.models import Seller, Notification
 from artworks.models import Artwork
 from .forms import BidForm
 from .models import Bid
+
+from accounts.models import Notification
 
 
 @login_required
@@ -23,6 +25,19 @@ def submit_bid(request, artwork_id):
         bid.artwork = artwork
         bid.buyer = request.user
         bid.save()
+        try:
+            Notification.objects.create(
+                recipient=artwork.seller.user,
+                artwork=artwork,
+                bid=bid,
+                message=(
+                    f"New bid on {artwork.title}: "
+                    f"{bid.amount} ISK"
+                )
+            )
+        except Exception:
+            pass
+
         messages.success(request, "Bid submitted successfully.")
     else:
         messages.error(request, "Invalid bid. Please check the amount.")

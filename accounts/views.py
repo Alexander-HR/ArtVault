@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from artworks.models import Artwork
 from .models import Profile, Seller
 from .forms import AddressForm, CustomUserCreationForm, ProfileForm, SellerProfileForm
-
+from .models import Notification
 
 def signup(request):
     if request.method == "POST":
@@ -112,3 +112,17 @@ def seller_list(request):
         "sellers": sellers,
     })
 
+@login_required
+def notifications_view(request):
+    notifications = (
+        Notification.objects
+        .filter(recipient=request.user)
+        .select_related("artwork", "bid")
+        .order_by("-created_at")
+    )
+
+    notifications.update(is_read=True)
+
+    return render(request, "accounts/notifications.html", {
+        "notifications": notifications,
+    })

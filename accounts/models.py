@@ -40,3 +40,29 @@ class Seller(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class Notification(models.Model):
+    recipient = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="notifications"
+    )
+
+    artwork = models.ForeignKey(
+        "artworks.Artwork",
+        on_delete=models.CASCADE
+    )
+
+    bid = models.ForeignKey(
+        "bids.Bid",
+        on_delete=models.CASCADE
+    )
+
+    message = models.CharField(max_length=255)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.message
