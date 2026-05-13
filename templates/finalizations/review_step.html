@@ -1,24 +1,106 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1>Saved successfully - payment step will be implemented later - temporary redirect to review</h1>
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h1>Finalize Bid</h1>
+                <h3>Review Information</h3>
+            </div>
+            <form method="post">
+            {% csrf_token %}
+                <div class="card-body">
+                    <h4>Order information</h4>
+                    <p>
+                        <strong>Bid ID: </strong>
+                        {{ bid.id }}
+                    </p>
+                    <p>
+                        <strong>Artwork title: </strong>
+                        {{ bid.artwork.title }}
+                    </p>
+                    <p>
+                        <strong>Artwork seller: </strong>
+                        {{ bid.artwork.seller.user }}
+                    </p>
+                    <p>
+                        <strong>Bid amount: </strong>
+                        {{ bid.amount|floatformat:0 }} ISK
+                    </p>
+                    <hr>
+                    <h4>Contact information</h4>
+                    <p>
+                        <strong>Street: </strong>
+                        {{ finalization.address.street_name }}
+                    </p>
+                    <p>
+                        <strong>City: </strong>
+                        {{ finalization.address.city }}
+                    </p>
+                    <p>
+                        <strong>Postal code: </strong>
+                        {{ finalization.address.postal_code }}
+                    </p>
+                    <p>
+                        <strong>Country: </strong>
+                        {{ finalization.address.country }}
+                    </p>
+                    <p>
+                        <strong>National ID: </strong>
+                        {{ finalization.national_id}}
+                    </p>
+                    <hr>
+                    <h4>Payment information</h4>
+                    {% if finalization.payment.payment_type == "credit_card" %}
+                        <p>
+                            <strong>Cardholder name: </strong>
+                            {{ finalization.payment.cardholder }}
+                        </p>
+                        <p>
+                            <strong>Card number: </strong>
+                            **** **** **** {{ finalization.payment.card_number|slice:"-4:"}}
+                        </p>
+                        <p>
+                            <strong>Card expiry date: </strong>
+                            {{ finalization.payment.card_expiration}}
+                        </p>
+                        <p>
+                            <strong>Card CVC: </strong>
+                            ***
+                        </p>
+                    {% endif %}
 
-    <p>Your contact information was saved.</p>
+                    {% if finalization.payment.payment_type == "bank_transfer" %}
+                        <p>
+                            <strong>Bank account: </strong>
+                            {{ finalization.payment.bank_account }}
+                        </p>
+                    {% endif %}
 
-    <h3>Bid</h3>
-    <p>Bid ID: {{ bid.id }}</p>
-    <p>Bid amount: {{ bid.amount }} ISK</p>
-
-    <h3>Contact information</h3>
-    <p>Street: {{ finalization.address.street_name }}</p>
-    <p>City: {{ finalization.address.city }}</p>
-    <p>Postal code: {{ finalization.address.postal_code }}</p>
-    <p>Country: {{ finalization.address.country }}</p>
-    <p>National ID: {{ finalization.national_id }}</p>
-
-    <a href="{% url 'finalization:contact_step' bid.id %}" class="btn btn-outline-secondary">
-        Back
-    </a>
+                    {% if finalization.payment.payment_type == "wire_transfer" %}
+                        <p>
+                            <strong>Bank name: </strong>
+                            {{ finalization.payment.bank_name }}
+                        </p>
+                        <p>
+                            <strong>Routing number: </strong>
+                            {{ finalization.payment.routing_number }}
+                        </p>
+                        <p>
+                            <strong>Account number: </strong>
+                            {{ finalization.payment.account_number }}
+                        </p>
+                    {% endif %}
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'finalization:payment_step' bid.id %}" class="btn btn-outline-secondary">
+                            Back
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            Confirm Bid
+                        </button>
+                    </div>
+                </div>
+        </form>
+    </div>
 </div>
 {% endblock %}
