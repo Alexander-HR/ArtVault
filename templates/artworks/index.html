@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {%block content%}
+{% load humanize %}
     <h2 class="mb-4">Artwork Catalogue</h2>
     <div class="row">
         <form method="get" class="d-flex flex-wrap gap-2 mb-4">
@@ -73,8 +74,11 @@
                             <span class ="badge bg-success">Available</span>
                         {% endif %}
                         <h3 class="card-title">{{artwork.title}}</h3>
-
-                        <p class="card-text">Starting bid: {{ artwork.starting_bid }}</p>
+                        {% if artwork.highest_bid %}
+                            <p>Highest bid: {{ artwork.highest_bid | floatformat:0 | intcomma }} ISK</p>
+                        {% else %}
+                            <p>Starting bids: {{ artwork.starting_bid | floatformat:0 | intcomma }} ISK</p>
+                        {% endif %}
                         <p class="card-text">Medium: {{ artwork.medium }}</p>
                         <p class="card-text">Dimensions: {{ artwork.dimensions }}</p>
 
