@@ -23,6 +23,7 @@
                                     <th>Bid Price</th>
                                     <th>Status</th>
                                     <th>Expiration Date</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
 
@@ -34,12 +35,23 @@
                                         <td>{{ bid.amount }} ISK</td>
                                         <td>{{ bid.get_status_display }}</td>
                                         <td>{{ bid.expires_at }}</td>
+                                        <td>
+                                            {% if bid.status == "pending" and not bid.artwork.sold %}
+                                                <form method="post" action="{% url 'bids:accept_bid' bid.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                        Accept
+                                                    </button>
+                                                </form>
+                                            {% else %}
+                                                <span class="text-muted">Not available</span>
+                                            {% endif %}
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
-
                 {% else %}
                     <p>No current bids.</p>
                 {% endif %}
@@ -76,7 +88,6 @@
                             </tbody>
                         </table>
                     </div>
-
                 {% else %}
                     <p>No previous sales.</p>
                 {% endif %}

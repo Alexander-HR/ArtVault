@@ -1,12 +1,14 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
+
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
+from accounts.models import Seller
 from artworks.models import Artwork
 from .forms import BidForm
 from .models import Bid
-from accounts.models import Seller
 
 
 @login_required
@@ -31,10 +33,10 @@ def submit_bid(request, artwork_id):
 
 @login_required
 def my_bids(request):
-    tab = request.GET.get('tab', 'active')
+    tab = request.GET.get("tab", "active")
     bids = request.user.bids.select_related("artwork").order_by("-created_at")
 
-    if tab == 'active':
+    if tab == "active":
         bids = bids.filter(expires_at__gt=timezone.now())
     elif tab == 'accepted':
         bids = bids.filter(status__in=['accepted', 'contingent'])
@@ -43,7 +45,7 @@ def my_bids(request):
 
     return render(request, "my-bids.html", {
         "bids": bids,
-        "active_tab": tab
+        "active_tab": tab,
     })
 
 
@@ -70,3 +72,69 @@ def seller_dashboard(request):
         "current_bids": current_bids,
         "previous_sales": previous_sales,
     })
+
+@login_required
+def seller_bids_overview(request):
+    try:
+        seller = Seller.objects.get(user=request.user)
+    except Seller.DoesNotExist:
+        messages.error(request, "You need to create a seller profile before accessing the seller dashboard.")
+        return redirect("create_seller_profile")
+
+    current_bids = Bid.objects.filter(
+        artwork__seller=seller,
+        artwork__sold=False
+    ).select_related("artwork", "buyer").order_by("-created_at")
+
+    previous_sales = Bid.objects.filter(
+        artwork__seller=seller,
+        artwork__sold=True,
+        status__in=["accepted", "finalized"]
+    ).select_related("artwork", "buyer").order_by("-created_at")
+
+    return render(request, "bids/seller_bids_overview.html", {
+        "current_bids": current_bids,
+        "previous_sales": previous_sales,
+    })
+
+
+@login_required
+@transaction.atomic
+def accept_bid(request, bid_id):
+    if request.method != "POST":
+        return redirect("bids:seller_bids_overview")
+
+    seller = Seller.objects.filter(user=request.user).first()
+
+    if not seller:
+        messages.error(request, "You need a seller profile to accept bids.")
+        return redirect("create_seller_profile")
+
+    bid = get_object_or_404(
+        Bid.objects.select_related("artwork", "buyer"),
+        id=bid_id,
+        artwork__seller=seller,
+    )
+
+    artwork = bid.artwork
+
+    if artwork.sold:
+        messages.error(request, "This artwork has already been sold.")
+        return redirect("bids:seller_bids_overview")
+
+    if bid.status != "pending":
+        messages.error(request, "Only pending bids can be accepted.")
+        return redirect("bids:seller_bids_overview")
+
+    if bid.expires_at < timezone.now():
+        messages.error(request, "This bid has expired and cannot be accepted.")
+        return redirect("bids:seller_bids_overview")
+
+    bid.status = "accepted"
+    bid.save()
+
+    artwork.sold = True
+    artwork.save()
+
+    messages.success(request, "Bid accepted successfully. The artwork is now marked as sold.")
+    return redirect("bids:seller_bids_overview")

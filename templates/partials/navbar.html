@@ -19,7 +19,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href={% url 'sellers' %}>Sellers</a>
+                    <a class="nav-link" href="{% url 'sellers' %}">Sellers</a>
                 </li>
 
                 {% if user.is_authenticated %}
@@ -33,12 +33,16 @@
 
                     {% if user.is_staff %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Admin Dashboard</a>
+                            <a class="nav-link" href="{% url 'admin:index' %}">Admin Dashboard</a>
                         </li>
                     {% endif %}
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'bids:seller_dashboard' %}">Seller Dashboard</a>
+                        <a class="nav-link" href="{% url 'artworks:create_artwork' %}">Add New Artwork</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'bids:seller_bids_overview' %}">Seller Dashboard</a>
                     </li>
                 {% endif %}
             </ul>
