@@ -1,5 +1,5 @@
 from django import forms
-from .models import Profile, User
+from .models import Address, Profile, Seller, User
 from django.contrib.auth.forms import UserCreationForm
 
 class ProfileForm(forms.ModelForm):
@@ -41,3 +41,33 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm):
         model = User
         fields = UserCreationForm.Meta.fields
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = ["street_name", "city", "postal_code", "country"]
+        widgets = {
+            "street_name": forms.TextInput(attrs={"class": "form-control"}),
+            "city": forms.TextInput(attrs={"class": "form-control"}),
+            "postal_code": forms.TextInput(attrs={"class": "form-control"}),
+            "country": forms.Select(attrs={"class": "form-control"}),
+        }
+
+
+class SellerProfileForm(forms.ModelForm):
+    logo = forms.ImageField(
+        required=True,
+        widget=forms.ClearableFileInput(attrs={"class": "form-control"})
+    )
+    cover_image = forms.ImageField(
+        required=True,
+        widget=forms.ClearableFileInput(attrs={"class": "form-control"})
+    )
+
+    class Meta:
+        model = Seller
+        fields = ["type", "bio", "logo", "cover_image"]
+        widgets = {
+            "type": forms.Select(attrs={"class": "form-control"}),
+            "bio": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
+        }
