@@ -28,7 +28,7 @@ def artwork_detail(request, artwork_id):
             .first()
         )
 
-        is_favorited = Favorite.object.filter(
+        is_favorited = Favorite.objects.filter(
             user=request.user, artwork=artwork
         ).exists()
 
@@ -37,6 +37,7 @@ def artwork_detail(request, artwork_id):
         "images": artwork.images.all(),
         "user_bid": user_bid,
         "form": BidForm(artwork=artwork),
+        "is_favorited": is_favorited
     }
 
     return render(request, "artworks/detail.html", context)
@@ -133,6 +134,7 @@ def favorites(request):
         "artworks": favorite_artworks
         })
 
+@login_required
 def toggle_favorite(request, artwork_id):
     if request.method != "POST":
         return redirect("artworks:artwork_detail", artwork_id=artwork_id)
