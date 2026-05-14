@@ -31,18 +31,40 @@
                         <a class="nav-link" href="{% url 'profile' %}">Profile</a>
                     </li>
 
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           role="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Seller Dashboard
+                        </a>
+                        <ul class="dropdown-menu">
+                             <li>
+                                <a class="dropdown-item"
+                                   href="{% url 'seller_profile' request.user.seller.id %}">
+                                    My seller profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   href="{% url 'artworks:create_artwork' %}">
+                                    Add Artwork
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   href="{% url 'bids:seller_bids_overview' %}">
+                                    Seller Bids
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                     {% if user.is_staff %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'admin:index' %}">Admin Dashboard</a>
                         </li>
                     {% endif %}
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'artworks:create_artwork' %}">
-                            Add New Artwork
-                        </a>
-                        <a class="nav-link" href="{% url 'bids:seller_bids_overview' %}">Seller Bids</a>
-                    </li>
                 {% endif %}
             </ul>
 
