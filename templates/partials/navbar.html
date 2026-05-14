@@ -30,7 +30,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'profile' %}">Profile</a>
                     </li>
-                    {% if user.is_seller %}
+                    {% if user.seller %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle"
                                href="#"
@@ -58,9 +58,9 @@
                                         Seller Bids
                                     </a>
                                 </li>
-                            {% endif %}
-                        </ul>
-                    </li>
+                            </ul>
+                        </li>
+                    {% endif %}
                     {% if user.is_staff %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'admin:index' %}">Admin Dashboard</a>
