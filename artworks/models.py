@@ -30,6 +30,7 @@ class Artwork(models.Model):
     year_created = models.PositiveIntegerField()
     edition = models.CharField(max_length=50)
     provenance = models.TextField()
+    artist_name = models.CharField(max_length=255)
     def __str__(self):
         return f'{self.title}, {self.id}'
 

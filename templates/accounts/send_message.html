@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <a href="javascript:history.back()" class="btn btn-outline-secondary mb-4">← Back </a>
+    <div class="card">
+        <div class="card-header">
+            <h3>Message {{ receiver.username }}</h3>
+        </div>
+
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                <h6 class="mb-3">Subject: </h6>
+                <div class="mb-3">
+                    {{ form.subject }}
+                </div>
+
+                <h6 class="mb-3">Message: </h6>
+                <div class="mb-3">
+                    {{ form.body }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                Send message
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
