@@ -4,42 +4,112 @@
 <div class="container my-5">
     <a href="{% url 'home' %}" class="btn btn-outline-secondary mb-4">← Back to Home</a>
 
+    {% if seller.cover_image and seller.cover_image.name %}
+        <div class="mb-4">
+        <img src="{{ seller.cover_image.url }}"
+             class="img-fluid rounded border w-100"
+             alt="{{ seller.user.username }} cover image"
+             style="max-height: 320px; object-fit: cover;">
+        </div>
+    {% else %}
+        <div class="bg-light border-bottom d-flex align-items-center justify-content-center" style="height: 220px;">
+            <span class="text-muted">Cover Image</span>
+        </div>
+    {% endif %}
+
     <div class="row">
         <div class="col-md-4">
-            <div class="bg-light border rounded d-flex align-items-center justify-content-center mb-3" style="height: 260px;">
-                <span class="text-muted">Seller Image Placeholder</span>
-            </div>
+            {% if seller.logo and seller.logo.name %}
+                <img src="{{ seller.logo.url }}"
+                     class="rounded border mb-3"
+                     alt="{{ seller.user.username }} logo"
+                     style="width: 180px; height: 180px; object-fit: cover;">
+            {% else %}
+                <div class="bg-light border rounded d-flex align-items-center justify-content-center mb-3"
+                     style="width: 180px; height: 180px;">
+                    <span class="text-muted">Seller Logo</span>
+                </div>
+            {% endif %}
 
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-body">
-                    <h3>{{ seller.username }}</h3>
-                    <p class="text-muted mb-1">{{ seller.location }}</p>
-                    <p class="text-muted">Member since {{ seller.member_since }}</p>
-                    <p>{{ seller.bio }}</p>
+                    <h3>{{ seller.user.username }}</h3>
+
+                    <p class="text-muted mb-2">
+                        <strong>Seller type:</strong> {{ seller.get_type_display }}
+                    </p>
+
+                    {% if seller.bio %}
+                        <p>{{ seller.bio }}</p>
+                    {% else %}
+                        <p class="text-muted">No seller bio available.</p>
+                    {% endif %}
+                    {% if request.user != seller.user %}
+                        <a href="{% url 'send_message' seller.user_id %}"
+                           class="btn btn-outline-primary">
+                            Send Message
+                        </a>
+                    {% endif %}
                 </div>
             </div>
+
+            {% if seller.type == "gallery" and seller.address %}
+                <div class="card">
+                    <div class="card-header">
+                        Gallery Address
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1">{{ seller.address.street_name }}</p>
+                        <p class="mb-1">{{ seller.address.city }}</p>
+                        <p class="mb-0">{{ seller.address.postal_code }}</p>
+                    </div>
+                </div>
+            {% endif %}
         </div>
 
         <div class="col-md-8">
             <h1>Seller Profile</h1>
-            <p class="text-muted">Listed artworks by {{ seller.username }}</p>
+            <p class="text-muted">Listed artworks by {{ seller.user.username }}</p>
 
             <div class="row">
                 {% for artwork in artworks %}
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ artwork.title }}</h5>
-                            <p class="card-text">
-                                <strong>Status:</strong> {{ artwork.status }}<br>
-                                <strong>Price:</strong> {{ artwork.price }}
-                            </p>
-                            <button class="btn btn-outline-primary btn-sm" disabled>View Artwork</button>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            {% with first_image=artwork.images.first %}
+                                {% if first_image and first_image.image and first_image.image.name %}
+                                    <img src="{{ first_image.image.url }}"
+                                         class="card-img-top"
+                                         alt="{{ artwork.title }}"
+                                         style="height: 220px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-light border-bottom d-flex align-items-center justify-content-center"
+                                         style="height: 220px;">
+                                        <span class="text-muted">Artwork Image</span>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                            <div class="card-body">
+                                {% if artwork.sold %}
+                                    <span class="badge bg-danger mb-2">Sold</span>
+                                {% else %}
+                                    <span class="badge bg-success mb-2">Available</span>
+                                {% endif %}
+
+                                <h5 class="card-title">{{ artwork.title }}</h5>
+
+                                <p class="card-text">
+                                    <strong>Starting bid:</strong> {{ artwork.starting_bid }} ISK
+                                </p>
+
+                                <a href="{% url 'artworks:artwork_detail' artwork.id %}"
+                                   class="btn btn-outline-primary btn-sm">
+                                    View Artwork
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
                 {% empty %}
-                <p class="text-muted">This seller has no listed artworks yet.</p>
+                    <p class="text-muted">This seller has no listed artworks yet.</p>
                 {% endfor %}
             </div>
         </div>

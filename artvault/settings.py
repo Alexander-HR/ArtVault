@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from decouple import config
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,9 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -43,6 +42,8 @@ INSTALLED_APPS = [
     "bids",
     "dashboards",
     "finalization",
+    "storages",
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
@@ -73,8 +74,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "artvault.wsgi.application"
-
-
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 DATABASES = {
@@ -88,10 +87,8 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -109,13 +106,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # User authentication for user model in accounts
 AUTH_USER_MODEL = "accounts.User"
-LOGIN_URL='/accounts/login'
+LOGIN_URL='/login'
 LOGIN_REDIRECT_URL='/'
-LOGOUT_REDIRECT_URL='/account/login'
+LOGOUT_REDIRECT_URL='/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
@@ -124,16 +120,36 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
-
 STATIC_URL = "static/"
 
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+AZURE_ACCOUNT_NAME = config('AZURE_ACCOUNT_NAME', default='')
+AZURE_ACCOUNT_KEY = config('AZURE_ACCOUNT_KEY', default='')
+AZURE_CONTAINER = 'media'
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+STORAGES = {
+    'default': {
+        'BACKEND': 'storages.backends.azure_storage.AzureStorage',
+        'OPTIONS': {
+            'account_name': AZURE_ACCOUNT_NAME,
+            'account_key': AZURE_ACCOUNT_KEY,
+            'azure_container': AZURE_CONTAINER,
+            'overwrite_files': False,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+MEDIA_URL = f"https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net/{AZURE_CONTAINER}/"
+
+# Make error messages from bootstrap work with django
+MESSAGE_TAGS = {
+    messages.ERROR: "danger",
+}

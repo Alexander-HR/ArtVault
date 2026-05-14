@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {%block content%}
+{% load humanize %}
     <h2 class="mb-4">Artwork Catalogue</h2>
     <div class="row">
         <form method="get" class="d-flex flex-wrap gap-2 mb-4">
@@ -55,9 +55,18 @@
         {% for artwork in artworks %}
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
-                    <img src="{% static artwork.images.first.image_path %}" class="card-img-top artwork-thumbnail" alt="{{ artwork.title }}">
-                    <p>{{ artwork.images.first.image.name }}</p>
-
+                    {% with first_image=artwork.images.first %}
+                        {% if first_image and first_image.image and first_image.image.name %}
+                            <img src="{{ first_image.image.url }}"
+                                 class="card-img-top artwork-thumbnail"
+                                 alt="{{ artwork.title }}">
+                        {% else %}
+                            <div class="bg-light border rounded d-flex align-items-center justify-content-center mb-3"
+                                 style="height: 420px;">
+                                <span class="text-muted">Artwork Image Placeholder</span>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
                     <div class="card-body">
                          {% if artwork.sold %}
                             <span class="badge bg-danger">Sold</span>
@@ -65,8 +74,12 @@
                             <span class ="badge bg-success">Available</span>
                         {% endif %}
                         <h3 class="card-title">{{artwork.title}}</h3>
-
-                        <p class="card-text">Starting bid: {{ artwork.starting_bid }}</p>
+                        <h5>by {{ artwork.artist_name }}</h5>
+                        {% if artwork.highest_bid %}
+                            <p>Highest bid: {{ artwork.highest_bid | floatformat:0 | intcomma }} ISK</p>
+                        {% else %}
+                            <p>Starting bid: {{ artwork.starting_bid | floatformat:0 | intcomma }} ISK</p>
+                        {% endif %}
                         <p class="card-text">Medium: {{ artwork.medium }}</p>
                         <p class="card-text">Dimensions: {{ artwork.dimensions }}</p>
 
@@ -74,6 +87,10 @@
 
                     </div>
                 </div>
+            </div>
+        {% empty %}
+            <div class="text-center mt-4">
+                <p>No artworks available at the moment.</p>
             </div>
     {% endfor %}
     </div>

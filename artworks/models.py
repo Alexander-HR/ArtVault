@@ -30,12 +30,13 @@ class Artwork(models.Model):
     year_created = models.PositiveIntegerField()
     edition = models.CharField(max_length=50)
     provenance = models.TextField()
+    artist_name = models.CharField(max_length=255)
     def __str__(self):
         return f'{self.title}, {self.id}'
 
 class ArtworkImage(models.Model):
     id = models.AutoField(primary_key=True)
     artwork = models.ForeignKey(Artwork, on_delete=models.CASCADE, related_name='images')
-    image_path = models.CharField(max_length=255)
+    image = models.ImageField(upload_to="artwork_images", blank=True, null=True)
     def __str__(self):
         return f'Image for {self.artwork.title}'

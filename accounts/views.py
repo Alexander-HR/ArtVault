@@ -1,71 +1,252 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.core.files.storage import default_storage
+from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import ProfileForm
-from .models import Profile
+from artworks.models import Artwork
 
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from .models import (
+    Profile,
+    Seller,
+    User,
+    Message,
+    Notification
+)
 
-# Create your views here.
+from .forms import (
+    AddressForm,
+    CustomUserCreationForm,
+    ProfileForm,
+    SellerProfileForm,
+    MessageForm
+)
 
 
-def register(request):
+def signup(request):
     if request.method == "POST":
-        print(1)
+        form = CustomUserCreationForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect("login")
+
     else:
-        return render(request, "user/register.html", {
-            "form": UserCreationForm()
-        })
+        form = CustomUserCreationForm()
+
+    return render(request, "accounts/signup.html", {
+        "form": form
+    })
+
 
 @login_required
 def profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
 
     if request.method == "POST":
-        form = ProfileForm(request.POST, request.FILES, instance=profile, user=request.user)
+        form = ProfileForm(
+            request.POST,
+            request.FILES,
+            instance=profile,
+            user=request.user
+        )
 
         if form.is_valid():
             form.save()
-            messages.success(request, "Profile updated successfully.")
+
+            messages.success(
+                request,
+                "Profile updated successfully."
+            )
+
             return redirect("profile")
 
-        messages.error(request, "Profile update failed. Please check the errors below.")
+        messages.error(
+            request,
+            "Profile update failed. Please check the errors below."
+        )
+
     else:
-        form = ProfileForm(instance=profile, user=request.user)
+        form = ProfileForm(
+            instance=profile,
+            user=request.user
+        )
+
+    has_seller_profile = Seller.objects.filter(
+        user=request.user
+    ).exists()
 
     return render(request, "profile.html", {
         "form": form,
         "profile": profile,
+        "has_seller_profile": has_seller_profile,
+    })
+
+
+@login_required
+def create_seller_profile(request):
+    if Seller.objects.filter(user=request.user).exists():
+        messages.info(request, "You already have a seller profile.")
+        return redirect("profile")
+
+    if request.method == "POST":
+        seller_form = SellerProfileForm(
+            request.POST,
+            request.FILES
+        )
+
+        address_form = AddressForm(request.POST)
+
+        if seller_form.is_valid() and address_form.is_valid():
+            address = address_form.save()
+
+            logo_file = seller_form.cleaned_data["logo"]
+            cover_image_file = seller_form.cleaned_data["cover_image"]
+
+            logo_path = default_storage.save(
+                f"seller_images/logos/{logo_file.name}",
+                logo_file
+            )
+
+            cover_image_path = default_storage.save(
+                f"seller_images/covers/{cover_image_file.name}",
+                cover_image_file
+            )
+
+            seller = seller_form.save(commit=False)
+
+            seller.user = request.user
+            seller.address = address
+            seller.logo = default_storage.url(logo_path)
+            seller.cover_image = default_storage.url(cover_image_path)
+
+            seller.save()
+
+            messages.success(
+                request,
+                "Seller profile created successfully."
+            )
+
+            return redirect("profile")
+
+        messages.error(
+            request,
+            "Seller profile creation failed. Please check the errors below."
+        )
+
+    else:
+        seller_form = SellerProfileForm()
+        address_form = AddressForm()
+
+    return render(request, "accounts/create_seller_profile.html", {
+        "seller_form": seller_form,
+        "address_form": address_form,
     })
 
 
 def seller_profile(request, seller_id):
-    seller = {
-        "id": seller_id,
-        "username": "Sample Seller",
-        "bio": "This is a placeholder seller profile. Real seller information will be connected later.",
-        "location": "Reykjavik, Iceland",
-        "member_since": "2026",
-    }
+    seller = get_object_or_404(
+        Seller.objects.select_related("user", "address"),
+        id=seller_id,
+    )
 
-    artworks = [
-        {"title": "Sample Artwork 1", "status": "Available", "price": "1000 ISK"},
-        {"title": "Sample Artwork 2", "status": "Available", "price": "2500 ISK"},
-        {"title": "Sample Artwork 3", "status": "Sold", "price": "4000 ISK"},
-    ]
+    artworks = (
+        Artwork.objects
+        .filter(seller=seller)
+        .prefetch_related("images")
+        .order_by("title")
+    )
 
     return render(request, "accounts/seller_profile.html", {
         "seller": seller,
         "artworks": artworks,
     })
-    return render(
-        request,
-        "accounts/seller_profile.html",
-        {
-            "seller": seller,
-            "artworks": artworks,
-        },
+
+
+def seller_list(request):
+    sellers = Seller.objects.all()
+
+    return render(request, "accounts/seller_list.html", {
+        "sellers": sellers,
+    })
+
+
+@login_required
+def notifications_view(request):
+    notifications = (
+        Notification.objects
+        .filter(recipient=request.user)
+        .select_related("artwork", "bid")
+        .order_by("-created_at")
     )
+
+    notifications.update(is_read=True)
+
+    return render(request, "accounts/notifications.html", {
+        "notifications": notifications,
+    })
+
+
+@login_required
+def send_message(request, user_id):
+    receiver = get_object_or_404(User, id=user_id)
+
+    if request.method == "POST":
+        form = MessageForm(request.POST)
+
+        if form.is_valid():
+            message = form.save(commit=False)
+
+            message.receiver = receiver
+            message.sender = request.user
+
+            message.save()
+
+            messages.success(request, "Message sent.")
+
+            return redirect("inbox")
+
+    else:
+        form = MessageForm()
+
+    return render(request, "accounts/send_message.html", {
+        "form": form,
+        "receiver": receiver,
+    })
+
+
+@login_required
+def inbox(request):
+    tab = request.GET.get("tab", "unread")
+
+    received_messages = (
+        Message.objects
+        .filter(receiver=request.user)
+        .order_by("-date_created")
+    )
+
+    if tab == "unread":
+        received_messages = received_messages.filter(read=False)
+
+    return render(request, "accounts/inbox.html", {
+        "received_messages": received_messages,
+        "tab": tab,
+    })
+
+
+@login_required
+def message_read(request, message_id):
+    message = get_object_or_404(
+        Message,
+        id=message_id,
+        receiver=request.user
+    )
+
+    message.read = True
+    message.save()
+
+    next_url = request.GET.get("next")
+
+    if next_url:
+        return redirect(next_url)
+
+    return redirect("inbox")

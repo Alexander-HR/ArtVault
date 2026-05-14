@@ -1,50 +1,140 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="{% url 'home' %}">ArtVault</a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+            ArtVault
+        </a>
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="mainNavbar">
+
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    <a class="nav-link" href="{% url 'home' %}">
+                        Home
+                    </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'artworks:index' %}">Artworks</a>
+                    <a class="nav-link" href="{% url 'artworks:index' %}">
+                        Artworks
+                    </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Sellers</a>
+                    <a class="nav-link" href="{% url 'sellers' %}">
+                        Sellers
+                    </a>
                 </li>
 
                 {% if user.is_authenticated %}
+
                     <li class="nav-item">
-                        <a class="nav-link" href="#">My Bids</a>
+                        <a class="nav-link" href="{% url 'bids:my_bids' %}">
+                            My Bids
+                        </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                        <a class="nav-link" href="{% url 'profile' %}">
+                            Profile
+                        </a>
                     </li>
 
-                    {% if user.is_staff %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Admin Dashboard</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'notifications' %}">
+                            Notifications
+                        </a>
+                    </li>
+
+                    {% if user.seller %}
+                        <li class="nav-item dropdown">
+
+                            <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                Seller Dashboard
+                            </a>
+
+                            <ul class="dropdown-menu">
+
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'seller_profile' request.user.seller.id %}"
+                                    >
+                                        My seller profile
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'artworks:create_artwork' %}"
+                                    >
+                                        Add Artwork
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'bids:seller_bids_overview' %}"
+                                    >
+                                        Seller Bids
+                                    </a>
+                                </li>
+
+                            </ul>
+
                         </li>
                     {% endif %}
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Seller Dashboard</a>
-                    </li>
+                    {% if user.is_staff %}
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="{% url 'admin:index' %}"
+                            >
+                                Admin Dashboard
+                            </a>
+                        </li>
+                    {% endif %}
+
                 {% endif %}
             </ul>
 
             <ul class="navbar-nav ms-auto">
+
                 {% if user.is_authenticated %}
+
+                    <li class="nav-item">
+                        <span>
+                            <a
+                                class="navbar-text me-3"
+                                href="{% url 'inbox' %}"
+                            >
+                                Inbox
+                            </a>
+                        </span>
+                    </li>
+
                     <li class="nav-item">
                         <span class="navbar-text me-3">
                             Hi, {{ user.username }}
@@ -52,21 +142,42 @@
                     </li>
 
                     <li class="nav-item">
-                      <form method="post" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class ="btn btn-outline-secondary btn-sm">Logout</button>
-                      </form>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-secondary btn-sm"
+                            >
+                                Logout
+                            </button>
+                        </form>
                     </li>
+
                 {% else %}
+
                     <li class="nav-item me-2">
-                      <a class="btn btn-outline-primary btn-sm" href="{% url 'login' %} ">Login</a>
+                        <a
+                            class="btn btn-outline-primary btn-sm"
+                            href="{% url 'login' %}"
+                        >
+                            Login
+                        </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="btn btn-primary btn-sm" href="#">Sign Up</a>
+                        <a
+                            class="btn btn-primary btn-sm"
+                            href="{% url 'signup' %}"
+                        >
+                            Sign Up
+                        </a>
                     </li>
+
                 {% endif %}
+
             </ul>
+
         </div>
     </div>
 </nav>
