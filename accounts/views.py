@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404, redirect, render
 from artworks.models import Artwork
-from .models import Profile, Seller
-from .forms import AddressForm, CustomUserCreationForm, ProfileForm, SellerProfileForm
+from .models import Profile, Seller, User, Message
+from .forms import AddressForm, CustomUserCreationForm, ProfileForm, SellerProfileForm, MessageForm
 
 
 def signup(request):
@@ -111,4 +111,61 @@ def seller_list(request):
     return render(request, "accounts/seller_list.html", {
         "sellers": sellers,
     })
+
+@login_required
+def send_message(request, user_id):
+    receiver = get_object_or_404(User, id = user_id)
+
+    if request.method == "POST":
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.receiver = receiver
+            message.sender = request.user
+            message.save()
+
+            messages.success(request, "Message sent.")
+
+            return redirect("inbox")
+    else:
+        form = MessageForm()
+    return render(request, "accounts/send_message.html", {
+        "form": form,
+        "receiver": receiver,
+        })
+
+@login_required
+def inbox(request):
+    tab = request.GET.get("tab", "unread")
+
+    received_messages = Message.objects.filter(
+        receiver=request.user
+    ).order_by("-date_created")
+
+    if tab == "unread":
+        received_messages = received_messages.filter(read=False)
+
+    return render(request, "accounts/inbox.html", {
+        "received_messages": received_messages,
+        "tab": tab,
+    })
+
+@login_required
+def message_read(request, message_id):
+
+    message = get_object_or_404(
+        Message,
+        id=message_id,
+        receiver=request.user
+    )
+
+    message.read = True
+    message.save()
+
+    next_url = request.GET.get("next")
+
+    if next_url:
+        return redirect(next_url)
+
+    return redirect("inbox")
 

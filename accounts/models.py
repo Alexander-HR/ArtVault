@@ -40,3 +40,13 @@ class Seller(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class Message(models.Model):
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_messages')
+    subject = models.CharField(max_length=100)
+    body = models.TextField()
+    read = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f'Message from {self.sender} to {self.receiver}'
