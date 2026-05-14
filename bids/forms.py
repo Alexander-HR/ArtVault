@@ -32,4 +32,14 @@ class BidForm(forms.ModelForm):
                     f"Your bid must be higher than {floor} ISK."
                 )
         return amount
+    def clean_expires_at(self):
+        expires_at = self.cleaned_data["expires_at"]
 
+        from django.utils import timezone
+
+        if expires_at <= timezone.now():
+            raise forms.ValidationError(
+                "Expiration date must be in the future."
+            )
+
+        return expires_at

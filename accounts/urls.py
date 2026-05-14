@@ -4,7 +4,13 @@ from . import views
 
 urlpatterns = [
     path('signup', views.signup, name='signup'),
-    path('login', LoginView.as_view(template_name='accounts/login.html'), name='login'),
+
+    path(
+        'login',
+        LoginView.as_view(template_name='accounts/login.html'),
+        name='login'
+    ),
+
     path('logout', LogoutView.as_view(), name='logout'),
 
     path("profile/", views.profile_view, name="profile"),
@@ -27,5 +33,19 @@ urlpatterns = [
         "notifications/",
         views.notifications_view,
         name="notifications"
+    ),
+
+    path("inbox/", views.inbox, name="inbox"),
+
+    path(
+        "message/<int:user_id>/",
+        views.send_message,
+        name="send_message"
+    ),
+
+    path(
+        "message/<int:message_id>/read",
+        views.message_read,
+        name="message_read"
     ),
 ]
