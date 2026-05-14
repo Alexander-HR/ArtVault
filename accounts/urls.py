@@ -30,6 +30,12 @@ urlpatterns = [
     ),
 
     path(
+        "seller/artworks/",
+        views.seller_listed_artworks,
+        name="seller_listed_artworks"
+    ),
+
+    path(
         "notifications/",
         views.notifications_view,
         name="notifications"
