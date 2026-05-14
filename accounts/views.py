@@ -62,6 +62,48 @@ def seller_listed_artworks(request):
         "artworks": artworks,
     })
 
+@login_required
+def profile_view(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        form = ProfileForm(
+            request.POST,
+            request.FILES,
+            instance=profile,
+            user=request.user
+        )
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "Profile updated successfully."
+            )
+
+            return redirect("profile")
+
+        messages.error(
+            request,
+            "Profile update failed. Please check the errors below."
+        )
+
+    else:
+        form = ProfileForm(
+            instance=profile,
+            user=request.user
+        )
+
+    has_seller_profile = Seller.objects.filter(
+        user=request.user
+    ).exists()
+
+    return render(request, "profile.html", {
+        "form": form,
+        "profile": profile,
+        "has_seller_profile": has_seller_profile,
+    })
 
 @login_required
 def create_seller_profile(request):
