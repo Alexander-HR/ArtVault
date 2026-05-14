@@ -9,8 +9,6 @@ from artworks.models import Artwork
 from .forms import BidForm
 from .models import Bid
 
-from accounts.models import Notification
-
 
 @login_required
 def submit_bid(request, artwork_id):
@@ -25,6 +23,7 @@ def submit_bid(request, artwork_id):
         bid.artwork = artwork
         bid.buyer = request.user
         bid.save()
+
         try:
             Notification.objects.create(
                 recipient=artwork.seller.user,
@@ -48,12 +47,19 @@ def submit_bid(request, artwork_id):
 @login_required
 def my_bids(request):
     tab = request.GET.get("tab", "active")
-    bids = request.user.bids.select_related("artwork").order_by("-created_at")
+
+    bids = (
+        request.user.bids
+        .select_related("artwork")
+        .order_by("-created_at")
+    )
 
     if tab == "active":
         bids = bids.filter(expires_at__gt=timezone.now())
+
     elif tab == "accepted":
         bids = bids.filter(status__in=["accepted", "contingent"])
+
     elif tab == "pending":
         bids = bids.filter(status="pending")
 
@@ -86,6 +92,7 @@ def seller_bids_overview(request):
 @login_required
 @transaction.atomic
 def accept_bid(request, bid_id):
+
     if request.method != "POST":
         return redirect("bids:seller_bids_overview")
 
@@ -121,5 +128,22 @@ def accept_bid(request, bid_id):
     artwork.sold = True
     artwork.save()
 
-    messages.success(request, "Bid accepted successfully. The artwork is now marked as sold.")
+    try:
+        Notification.objects.create(
+            recipient=bid.buyer,
+            artwork=artwork,
+            bid=bid,
+            message=(
+                f"Your bid on {artwork.title} "
+                f"was accepted."
+            )
+        )
+    except Exception:
+        pass
+
+    messages.success(
+        request,
+        "Bid accepted successfully. The artwork is now marked as sold."
+    )
+
     return redirect("bids:seller_bids_overview")

@@ -13,10 +13,12 @@
             {% for notification in notifications %}
 
                 <a
-                    href="{% url 'bids:seller_bids_overview' %}"
+                    href="{% url 'artworks:artwork_detail' notification.artwork.id %}"
                     class="list-group-item list-group-item-action"
                 >
+
                     <div class="d-flex w-100 justify-content-between">
+
                         <h5 class="mb-1">
                             {{ notification.message }}
                         </h5>
@@ -24,12 +26,18 @@
                         <small>
                             {{ notification.created_at }}
                         </small>
+
                     </div>
 
                     <p class="mb-1">
                         Artwork:
                         {{ notification.artwork.title }}
                     </p>
+
+                    <small>
+                        Bid Amount:
+                        {{ notification.bid.amount }} ISK
+                    </small>
 
                 </a>
 
