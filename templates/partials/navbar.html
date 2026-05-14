@@ -1,4 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+
     <div class="container">
 
         <a class="navbar-brand fw-bold" href="{% url 'home' %}">
@@ -60,6 +61,7 @@
                     </li>
 
                     {% if user.seller %}
+
                         <li class="nav-item dropdown">
 
                             <a
@@ -113,9 +115,11 @@
                             </ul>
 
                         </li>
+
                     {% endif %}
 
                     {% if user.is_staff %}
+
                         <li class="nav-item">
                             <a
                                 class="nav-link"
@@ -124,9 +128,11 @@
                                 Admin Dashboard
                             </a>
                         </li>
+
                     {% endif %}
 
                 {% endif %}
+
             </ul>
 
             <ul class="navbar-nav ms-auto">
@@ -151,7 +157,12 @@
                     </li>
 
                     <li class="nav-item">
-                        <form method="post" action="{% url 'logout' %}">
+
+                        <form
+                            method="post"
+                            action="{% url 'logout' %}"
+                        >
+
                             {% csrf_token %}
 
                             <button
@@ -160,7 +171,9 @@
                             >
                                 Logout
                             </button>
+
                         </form>
+
                     </li>
 
                 {% else %}
@@ -188,5 +201,7 @@
             </ul>
 
         </div>
+
     </div>
+
 </nav>
