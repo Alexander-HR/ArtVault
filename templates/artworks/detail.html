@@ -85,12 +85,21 @@
                     <div class="d-flex align-items-center gap-3">
 
                         <div
-                            class="bg-light border rounded d-flex align-items-center justify-content-center"
-                            style="width: 72px; height: 72px;"
+                            class="border rounded-3 overflow-hidden"
+                            style="width: 72px; height: 72px; flex-shrink: 0;"
                         >
-                            <span class="text-muted small">
-                                Seller
-                            </span>
+                            {% if artwork.seller.logo and artwork.seller.logo.name %}
+                                    <img
+                                        src="{{ artwork.seller.logo.url }}"
+                                        class="w-100 h-100"
+                                        alt="{{ artwork.title }}"
+                                        style="object-fit: cover;"
+                                    >
+                            {% else %}
+                                <span class="text-muted small">
+                                    Seller
+                                </span>
+                            {% endif %}
                         </div>
 
                         <div>
