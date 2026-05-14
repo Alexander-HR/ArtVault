@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="container my-5">
+
     <a href="{% url 'home' %}" class="btn btn-outline-secondary mb-4">
         ← Back to Home
     </a>
@@ -12,12 +13,20 @@
         <div class="col-md-5">
 
             {% if images %}
-                <div id="artworkImages" class="carousel slide mb-3" data-bs-ride="carousel">
+                <div
+                    id="artworkImages"
+                    class="carousel slide mb-3"
+                    data-bs-ride="carousel"
+                >
 
                     <div class="carousel-inner">
+
                         {% for image in images %}
+
                             {% if image.image and image.image.name %}
-                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <div
+                                    class="carousel-item {% if forloop.first %}active{% endif %}"
+                                >
                                     <img
                                         src="{{ image.image.url }}"
                                         class="d-block w-100 rounded border"
@@ -25,7 +34,9 @@
                                         style="max-height: 420px; object-fit: cover;"
                                     >
                                 </div>
+
                             {% else %}
+
                                 <div
                                     class="bg-light border rounded d-flex align-items-center justify-content-center mb-3"
                                     style="height: 420px;"
@@ -34,8 +45,11 @@
                                         Artwork Image Placeholder
                                     </span>
                                 </div>
+
                             {% endif %}
+
                         {% endfor %}
+
                     </div>
 
                     {% if images.count > 1 %}
@@ -59,6 +73,7 @@
                         </button>
 
                     {% endif %}
+
                 </div>
 
             {% else %}
@@ -75,6 +90,7 @@
             {% endif %}
 
             <div class="card">
+
                 <div class="card-body">
 
                     <h5 class="card-title">
@@ -82,23 +98,41 @@
                     </h5>
 
                     {% if seller %}
+
                         <div class="d-flex align-items-center gap-3">
 
                             <div
-                                class="bg-light border rounded d-flex align-items-center justify-content-center"
-                                style="width: 72px; height: 72px;"
+                                class="border rounded-3 overflow-hidden d-flex align-items-center justify-content-center bg-light"
+                                style="width: 72px; height: 72px; flex-shrink: 0;"
                             >
-                                <span class="text-muted small">
-                                    Seller
-                                </span>
+
+                                {% if artwork.seller.logo and artwork.seller.logo.name %}
+
+                                    <img
+                                        src="{{ artwork.seller.logo.url }}"
+                                        class="w-100 h-100"
+                                        alt="{{ artwork.seller.user }}"
+                                        style="object-fit: cover;"
+                                    >
+
+                                {% else %}
+
+                                    <span class="text-muted small">
+                                        Seller
+                                    </span>
+
+                                {% endif %}
+
                             </div>
 
                             <div>
+
                                 <p class="mb-1">
                                     <strong>{{ artwork.seller.user }}</strong>
                                 </p>
 
                                 <div class="d-flex gap-2">
+
                                     <a
                                         class="btn btn-outline-primary"
                                         href="{% url 'seller_profile' artwork.seller.id %}"
@@ -107,25 +141,32 @@
                                     </a>
 
                                     {% if request.user != artwork.seller.user %}
+
                                         <a
                                             href="{% url 'send_message' artwork.seller.user.id %}"
                                             class="btn btn-outline-primary"
                                         >
                                             Message Seller
                                         </a>
+
                                     {% endif %}
+
                                 </div>
+
                             </div>
 
                         </div>
 
                     {% else %}
+
                         <p class="text-muted mb-0">
                             Seller information is currently unavailable.
                         </p>
+
                     {% endif %}
 
                 </div>
+
             </div>
 
         </div>
@@ -133,7 +174,10 @@
         <div class="col-md-7">
 
             <h1>{{ artwork.title }}</h1>
-            <h3>by {{ artwork.artist_name }}</h3>
+
+            <h3>
+                by {{ artwork.artist_name }}
+            </h3>
 
             <p class="text-muted">
                 Listed on {{ artwork.date_listed }}
@@ -165,8 +209,10 @@
                     <li class="list-group-item">
 
                         {% if artwork.highest_bid %}
+
                             <strong>Current highest bid:</strong>
                             {{ artwork.highest_bid|floatformat:0|intcomma }} ISK
+
                         {% endif %}
 
                     </li>
@@ -219,4 +265,9 @@
 
             </div>
 
-            {% endblock %}
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
