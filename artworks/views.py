@@ -31,10 +31,12 @@ def artwork_detail(request, artwork_id):
         "artwork": artwork,
         "images": artwork.images.all(),
         "user_bid": user_bid,
+        "seller": getattr(artwork, "seller", None),
         "form": BidForm(artwork=artwork),
     }
 
     return render(request, "artworks/detail.html", context)
+
 
 def index(request):
     artworks = Artwork.objects.prefetch_related("images").annotate(
@@ -61,7 +63,6 @@ def index(request):
 
     if sold == "sold":
         artworks = artworks.filter(sold=True)
-
     elif sold == "available":
         artworks = artworks.filter(sold=False)
 
@@ -73,7 +74,8 @@ def index(request):
         "selected_style": style,
         "search": search,
         "order_by": order_by,
-        "selected_sold": sold,})
+        "selected_sold": sold,
+    })
 
 
 @login_required
