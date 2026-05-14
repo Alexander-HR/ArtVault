@@ -1,11 +1,13 @@
 from django.contrib import admin
 
-from accounts.models import Profile
-from accounts.models import User
-from accounts.models import Seller
-from accounts.models import Address
-from accounts.models import Notification
-from accounts.models import Message
+from accounts.models import (
+    Profile,
+    User,
+    Seller,
+    Address,
+    Notification,
+    Message,
+)
 
 admin.site.register(User)
 admin.site.register(Seller)

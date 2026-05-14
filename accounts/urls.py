@@ -1,6 +1,8 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path
+
 from . import views
+
 
 urlpatterns = [
     path('signup', views.signup, name='signup'),
@@ -27,6 +29,12 @@ urlpatterns = [
         "sellers/<int:seller_id>/",
         views.seller_profile,
         name="seller_profile"
+    ),
+
+    path(
+        "seller/artworks/",
+        views.seller_listed_artworks,
+        name="seller_listed_artworks"
     ),
 
     path(

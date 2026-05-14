@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h1>My Artworks</h1>
+    <p class="text-muted">Overview of artworks you have listed for sale.</p>
+
+    {% if not seller %}
+        <div class="alert alert-warning">
+            You do not have a seller profile yet.
+        </div>
+    {% elif artworks %}
+        <div class="row">
+            {% for artwork in artworks %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if artwork.images.first %}
+                            <img src="{% static artwork.images.first.image_path %}"
+                                 class="card-img-top"
+                                 alt="{{ artwork.title }}"
+                                 style="height: 220px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light border-bottom d-flex align-items-center justify-content-center"
+                                 style="height: 220px;">
+                                <span class="text-muted">No image</span>
+                            </div>
+                        {% endif %}
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ artwork.title }}</h5>
+
+                            <p class="card-text mb-1">
+                                <strong>Starting bid:</strong> {{ artwork.starting_bid }} ISK
+                            </p>
+
+                            <p class="card-text mb-1">
+                                <strong>Medium:</strong> {{ artwork.get_medium_display }}
+                            </p>
+
+                            <p class="card-text mb-1">
+                                <strong>Status:</strong>
+                                {% if artwork.sold %}
+                                    Sold
+                                {% else %}
+                                    Available
+                                {% endif %}
+                            </p>
+
+                            <p class="card-text">
+                                <strong>Current bids:</strong> {{ artwork.bids.count }}
+                            </p>
+
+                            <a href="{% url 'artworks:artwork_detail' artwork.id %}"
+                               class="btn btn-outline-primary btn-sm">
+                                View details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            You have not listed any artworks yet.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
