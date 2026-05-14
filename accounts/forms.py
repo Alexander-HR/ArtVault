@@ -1,5 +1,5 @@
 from django import forms
-from .models import Address, Profile, Seller, User
+from .models import Address, Profile, Seller, User, Message
 from django.contrib.auth.forms import UserCreationForm
 
 class ProfileForm(forms.ModelForm):
@@ -71,3 +71,8 @@ class SellerProfileForm(forms.ModelForm):
             "type": forms.Select(attrs={"class": "form-control"}),
             "bio": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
         }
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ["subject", "body"]

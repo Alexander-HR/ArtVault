@@ -10,4 +10,7 @@ urlpatterns = [
     path("create-seller-profile/", views.create_seller_profile, name="create_seller_profile"),
     path("sellers/", views.seller_list, name="sellers"),
     path("sellers/<int:seller_id>/", views.seller_profile, name="seller_profile"),
+    path("inbox/", views.inbox, name="inbox"),
+    path("message/<int:user_id>/", views.send_message, name="send_message"),
+    path("message/<int:message_id>/read", views.message_read, name="message_read"),
 ]
