@@ -60,12 +60,6 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="navbar-text me-3" href="{% url 'inbox' %}">
-                            Inbox
-                        </a>
-                    </li>
-
                     {% if user.seller %}
 
                         <li class="nav-item dropdown">
@@ -88,6 +82,15 @@
                                         href="{% url 'seller_profile' request.user.seller.id %}"
                                     >
                                         My seller profile
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'seller_listed_artworks' %}"
+                                    >
+                                        My Artworks
                                     </a>
                                 </li>
 
@@ -137,11 +140,20 @@
                 {% if user.is_authenticated %}
 
                     <li class="nav-item">
+                        <span>
+                            <a
+                                class="navbar-text me-3"
+                                href="{% url 'inbox' %}"
+                            >
+                                Inbox
+                            </a>
+                        </span>
+                    </li>
 
+                    <li class="nav-item">
                         <span class="navbar-text me-3">
                             Hi, {{ user.username }}
                         </span>
-
                     </li>
 
                     <li class="nav-item">
@@ -167,25 +179,21 @@
                 {% else %}
 
                     <li class="nav-item me-2">
-
                         <a
                             class="btn btn-outline-primary btn-sm"
                             href="{% url 'login' %}"
                         >
                             Login
                         </a>
-
                     </li>
 
                     <li class="nav-item">
-
                         <a
                             class="btn btn-primary btn-sm"
                             href="{% url 'signup' %}"
                         >
                             Sign Up
                         </a>
-
                     </li>
 
                 {% endif %}

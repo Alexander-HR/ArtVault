@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
@@ -37,48 +38,23 @@ def signup(request):
 
 
 @login_required
-def profile_view(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
+def seller_listed_artworks(request):
+    seller = Seller.objects.filter(user=request.user).first()
 
-    if request.method == "POST":
-        form = ProfileForm(
-            request.POST,
-            request.FILES,
-            instance=profile,
-            user=request.user
+    artworks = []
+
+    if seller:
+        artworks = (
+            Artwork.objects
+            .filter(seller=seller)
+            .prefetch_related("images", "bids")
+            .order_by("title")
         )
 
-        if form.is_valid():
-            form.save()
-
-            messages.success(
-                request,
-                "Profile updated successfully."
-            )
-
-            return redirect("profile")
-
-        messages.error(
-            request,
-            "Profile update failed. Please check the errors below."
-        )
-
-    else:
-        form = ProfileForm(
-            instance=profile,
-            user=request.user
-        )
-
-    has_seller_profile = Seller.objects.filter(
-        user=request.user
-    ).exists()
-
-    return render(request, "profile.html", {
-        "form": form,
-        "profile": profile,
-        "has_seller_profile": has_seller_profile,
+    return render(request, "accounts/seller_listed_artworks.html", {
+        "seller": seller,
+        "artworks": artworks,
     })
-
 
 @login_required
 def create_seller_profile(request):
@@ -167,11 +143,25 @@ def seller_profile(request, seller_id):
     )
 
     return render(request, "accounts/seller_profile.html", {
+=======
+    artworks = []
+
+    if seller:
+        artworks = (
+            Artwork.objects
+            .filter(seller=seller)
+            .prefetch_related("images", "bids")
+            .order_by("title")
+        )
+
+    return render(request, "accounts/seller_listed_artworks.html", {
+>>>>>>> 1cae0507d76a1f746c839346680ec7252ac99e04
         "seller": seller,
         "artworks": artworks,
     })
 
 
+<<<<<<< HEAD
 def seller_list(request):
 
     sellers = Seller.objects.all()
@@ -181,6 +171,8 @@ def seller_list(request):
     })
 
 
+=======
+>>>>>>> 1cae0507d76a1f746c839346680ec7252ac99e04
 @login_required
 def notifications_view(request):
 
@@ -200,7 +192,10 @@ def notifications_view(request):
 
 @login_required
 def send_message(request, user_id):
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1cae0507d76a1f746c839346680ec7252ac99e04
     receiver = get_object_or_404(User, id=user_id)
 
     if request.method == "POST":
@@ -234,9 +229,11 @@ def inbox(request):
 
     tab = request.GET.get("tab", "unread")
 
-    received_messages = Message.objects.filter(
-        receiver=request.user
-    ).order_by("-date_created")
+    received_messages = (
+        Message.objects
+        .filter(receiver=request.user)
+        .order_by("-date_created")
+    )
 
     if tab == "unread":
         received_messages = received_messages.filter(read=False)
@@ -249,7 +246,6 @@ def inbox(request):
 
 @login_required
 def message_read(request, message_id):
-
     message = get_object_or_404(
         Message,
         id=message_id,
