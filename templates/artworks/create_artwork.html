@@ -24,6 +24,14 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">Artist name</label>
+                    {{ form.artist_name }}
+                    {% for error in form.artist_name.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Medium</label>
                     {{ form.medium }}
                     {% for error in form.medium.errors %}

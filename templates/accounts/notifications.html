@@ -4,7 +4,9 @@
 
 <div class="container mt-5">
 
-    <h2 class="mb-4">Notifications</h2>
+    <h2 class="mb-4">
+        Notifications
+    </h2>
 
     {% if notifications %}
 
@@ -13,7 +15,7 @@
             {% for notification in notifications %}
 
                 <a
-                    href="{% url 'artworks:artwork_detail' notification.artwork.id %}"
+                    href="{% url 'bids:my_bids' %}"
                     class="list-group-item list-group-item-action"
                 >
 
@@ -30,13 +32,17 @@
                     </div>
 
                     <p class="mb-1">
+
                         Artwork:
                         {{ notification.artwork.title }}
+
                     </p>
 
                     <small>
+
                         Bid Amount:
                         {{ notification.bid.amount }} ISK
+
                     </small>
 
                 </a>
