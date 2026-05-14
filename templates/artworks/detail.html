@@ -1,8 +1,7 @@
 {% extends "base.html" %}
-
-{% block content %}
 {% load humanize %}
 
+{% block content %}
 <div class="container my-5">
     <a href="{% url 'home' %}" class="btn btn-outline-secondary mb-4">
         ← Back to Home
@@ -219,3 +218,5 @@
                 </ul>
 
             </div>
+
+            {% endblock %}
