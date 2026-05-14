@@ -1,13 +1,16 @@
 from django.contrib import messages
+
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from accounts.models import Seller
+from accounts.models import Seller, Notification
 from artworks.models import Artwork
 from .forms import BidForm
 from .models import Bid
+
+from accounts.models import Notification
 
 
 @login_required
@@ -23,9 +26,35 @@ def submit_bid(request, artwork_id):
         bid.artwork = artwork
         bid.buyer = request.user
         bid.save()
+        try:
+            Notification.objects.create(
+                recipient=artwork.seller.user,
+                artwork=artwork,
+                bid=bid,
+                message=(
+                    f"New bid on {artwork.title}: "
+                    f"{bid.amount} ISK"
+                )
+            )
+        except Exception:
+            pass
+
         messages.success(request, "Bid submitted successfully.")
     else:
-        messages.error(request, "Invalid bid. Please check the amount.")
+        messages.error(request, "Please correct the errors below.")
+
+        context = {
+            "artwork": artwork,
+            "images": artwork.images.all(),
+            "form": form,
+            "user_bid": (
+                Bid.objects.filter(artwork=artwork, buyer=request.user)
+                .order_by("-created_at")
+                .first()
+            ),
+        }
+
+        return render(request, "artworks/detail.html", context)
 
     return redirect("artworks:artwork_detail", artwork_id=artwork_id)
 
@@ -37,10 +66,10 @@ def my_bids(request):
 
     if tab == "active":
         bids = bids.filter(expires_at__gt=timezone.now())
-    elif tab == "accepted":
-        bids = bids.filter(status__in=["accepted", "contingent"])
-    elif tab == "pending":
-        bids = bids.filter(status="pending")
+    elif tab == 'accepted':
+        bids = bids.filter(status__in=['accepted', 'contingent'])
+    elif tab == 'pending':
+        bids = bids.filter(status='pending')
 
     return render(request, "my-bids.html", {
         "bids": bids,
@@ -49,22 +78,51 @@ def my_bids(request):
 
 
 @login_required
-def seller_bids_overview(request):
-    seller = Seller.objects.filter(user=request.user).first()
+def seller_dashboard(request):
+    try:
+        seller = Seller.objects.get(user=request.user)
+    except Seller.DoesNotExist:
+        messages.error(request, "You need to create a seller profile before accessing the seller dashboard.")
+        return redirect("create_seller_profile")
 
-    if not seller:
-        messages.error(request, "You need a seller profile to view bids.")
-        return redirect("home")
+    current_bids = Bid.objects.filter(
+        artwork__seller=seller,
+        artwork__sold=False
+    ).select_related("artwork", "buyer")
 
-    bids = (
-        Bid.objects
-        .filter(artwork__seller=seller)
-        .select_related("artwork", "buyer")
-        .order_by("-created_at")
-    )
+    previous_sales = Bid.objects.filter(
+        artwork__seller=seller,
+        artwork__sold=True,
+        status="finalized"
+    ).select_related("artwork", "buyer")
 
     return render(request, "bids/seller_bids_overview.html", {
-        "bids": bids,
+        "current_bids": current_bids,
+        "previous_sales": previous_sales,
+    })
+
+@login_required
+def seller_bids_overview(request):
+    try:
+        seller = Seller.objects.get(user=request.user)
+    except Seller.DoesNotExist:
+        messages.error(request, "You need to create a seller profile before accessing the seller dashboard.")
+        return redirect("create_seller_profile")
+
+    current_bids = Bid.objects.filter(
+        artwork__seller=seller,
+        artwork__sold=False
+    ).select_related("artwork", "buyer").order_by("-created_at")
+
+    previous_sales = Bid.objects.filter(
+        artwork__seller=seller,
+        artwork__sold=True,
+        status__in=["accepted", "finalized"]
+    ).select_related("artwork", "buyer").order_by("-created_at")
+
+    return render(request, "bids/seller_bids_overview.html", {
+        "current_bids": current_bids,
+        "previous_sales": previous_sales,
     })
 
 
@@ -78,7 +136,7 @@ def accept_bid(request, bid_id):
 
     if not seller:
         messages.error(request, "You need a seller profile to accept bids.")
-        return redirect("home")
+        return redirect("create_seller_profile")
 
     bid = get_object_or_404(
         Bid.objects.select_related("artwork", "buyer"),
