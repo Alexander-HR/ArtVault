@@ -25,7 +25,20 @@ def submit_bid(request, artwork_id):
         bid.save()
         messages.success(request, "Bid submitted successfully.")
     else:
-        messages.error(request, "Invalid bid. Please check the amount.")
+        messages.error(request, "Please correct the errors below.")
+
+        context = {
+            "artwork": artwork,
+            "images": artwork.images.all(),
+            "form": form,
+            "user_bid": (
+                Bid.objects.filter(artwork=artwork, buyer=request.user)
+                .order_by("-created_at")
+                .first()
+            ),
+        }
+
+        return render(request, "artworks/detail.html", context)
 
     return redirect("artworks:artwork_detail", artwork_id=artwork_id)
 
