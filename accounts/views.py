@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
@@ -9,41 +8,48 @@ from artworks.models import Artwork
 from .forms import (
     AddressForm,
     CustomUserCreationForm,
+    MessageForm,
     ProfileForm,
     SellerProfileForm,
-    MessageForm,
 )
 
 from .models import (
+    Message,
+    Notification,
     Profile,
     Seller,
     User,
-    Message,
-    Notification,
 )
 
 
 def signup(request):
+
     if request.method == "POST":
+
         form = CustomUserCreationForm(request.POST)
 
         if form.is_valid():
             form.save()
+
             return redirect("login")
 
     else:
         form = CustomUserCreationForm()
 
-    return render(request, "accounts/signup.html", {"form": form})
+    return render(request, "accounts/signup.html", {
+        "form": form,
+    })
 
 
 @login_required
 def seller_listed_artworks(request):
+
     seller = Seller.objects.filter(user=request.user).first()
 
     artworks = []
 
     if seller:
+
         artworks = (
             Artwork.objects
             .filter(seller=seller)
@@ -56,10 +62,12 @@ def seller_listed_artworks(request):
         "artworks": artworks,
     })
 
+
 @login_required
 def create_seller_profile(request):
 
     if Seller.objects.filter(user=request.user).exists():
+
         messages.info(
             request,
             "You already have a seller profile."
@@ -68,6 +76,7 @@ def create_seller_profile(request):
         return redirect("profile")
 
     if request.method == "POST":
+
         seller_form = SellerProfileForm(
             request.POST,
             request.FILES
@@ -143,25 +152,11 @@ def seller_profile(request, seller_id):
     )
 
     return render(request, "accounts/seller_profile.html", {
-=======
-    artworks = []
-
-    if seller:
-        artworks = (
-            Artwork.objects
-            .filter(seller=seller)
-            .prefetch_related("images", "bids")
-            .order_by("title")
-        )
-
-    return render(request, "accounts/seller_listed_artworks.html", {
->>>>>>> 1cae0507d76a1f746c839346680ec7252ac99e04
         "seller": seller,
         "artworks": artworks,
     })
 
 
-<<<<<<< HEAD
 def seller_list(request):
 
     sellers = Seller.objects.all()
@@ -171,8 +166,6 @@ def seller_list(request):
     })
 
 
-=======
->>>>>>> 1cae0507d76a1f746c839346680ec7252ac99e04
 @login_required
 def notifications_view(request):
 
@@ -192,10 +185,7 @@ def notifications_view(request):
 
 @login_required
 def send_message(request, user_id):
-<<<<<<< HEAD
 
-=======
->>>>>>> 1cae0507d76a1f746c839346680ec7252ac99e04
     receiver = get_object_or_404(User, id=user_id)
 
     if request.method == "POST":
@@ -246,6 +236,7 @@ def inbox(request):
 
 @login_required
 def message_read(request, message_id):
+
     message = get_object_or_404(
         Message,
         id=message_id,
