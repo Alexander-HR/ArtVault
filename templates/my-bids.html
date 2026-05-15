@@ -38,7 +38,7 @@
                         <tr>
                             <td>{{ bid.artwork.title }}</td>
                             <td>{{ bid.amount | floatformat:0 | intcomma }}ISK</td>
-                            <td>{{ bid.get_status_display }}</td>
+                            <td><td><span class="status-badge status-{{ bid.status }}">{{ bid.get_status_display }}</span></td></td>
                             <td>{{ bid.expires_at|date:"M d, Y" }}</td>
                             <td>
                                 {% if bid.status == 'accepted' %}

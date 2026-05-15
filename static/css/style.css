@@ -139,8 +139,55 @@ footer {
     border-color: var(--secondary-color);
 }
 
+/* Button dark */
+.btn-dark,
+.btn-success {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--primary-text);
+    border-radius: 0;
+}
+
+.btn-dark:hover,
+.btn-dark:hover {
+    background-color: #0f3f52;
+    border-color: #0f3f52;
+    color: var(--primary-text);
+}
+
+.btn-dark:focus,
+.btn-dark:active,
+.btn-dark.active,
+.btn-dark:focus,
+.btn-dark:active,
+.btn-dark.active {
+    background-color: #0f3f52;
+    border-color: #0f3f52;
+    color: var(--primary-text);
+}
+
 /* Artwork Image */
 img.card-img-top.artwork-thumbnail {
     height: 250px;
     object-fit: cover;
+}
+
+/* Status based coloring */
+
+.status-badge.status-accepted {
+  color: green;
+  font-weight: bold;
+}
+
+.status-badge.status-rejected {
+  color: red;
+  font-weight: bold;
+}
+
+.status-badge.status-pending {
+  color: orange;
+}
+
+.status-badge.status-contingent {
+  color: blue;
 }
