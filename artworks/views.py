@@ -6,7 +6,7 @@ from accounts.models import Seller
 from bids.forms import BidForm
 from bids.models import Bid
 from .forms import ArtworkForm
-from .models import Artwork, ArtworkImage
+from .models import Artwork, ArtworkImage, Favorite
 from django.db.models import Max, Q
 
 
@@ -19,6 +19,7 @@ def artwork_detail(request, artwork_id):
     )
 
     user_bid = None
+    is_favorited = False
 
     if request.user.is_authenticated:
         user_bid = (
@@ -27,12 +28,17 @@ def artwork_detail(request, artwork_id):
             .first()
         )
 
+        is_favorited = Favorite.objects.filter(
+            user=request.user, artwork=artwork
+        ).exists()
+
     context = {
         "artwork": artwork,
         "images": artwork.images.all(),
         "user_bid": user_bid,
         "seller": getattr(artwork, "seller", None),
         "form": BidForm(artwork=artwork),
+        "is_favorited": is_favorited
     }
 
     return render(request, "artworks/detail.html", context)
@@ -66,6 +72,12 @@ def index(request):
     elif sold == "available":
         artworks = artworks.filter(sold=False)
 
+    favorited_ids = set()
+    if request.user.is_authenticated:
+        favorited_ids = set(
+            Favorite.objects.filter(user=request.user).values_list('artwork_id', flat=True)
+        )
+
     return render(request, "artworks/index.html", {
         "artworks": artworks,
         "medium_choices": Artwork.MEDIUM_CHOICES,
@@ -75,6 +87,7 @@ def index(request):
         "search": search,
         "order_by": order_by,
         "selected_sold": sold,
+        "favorited_ids": favorited_ids,
     })
 
 
@@ -121,3 +134,33 @@ def create_artwork(request):
     return render(request, "artworks/create_artwork.html", {
         "form": form
     })
+
+@login_required
+def favorites(request):
+    favorite_artworks = Artwork.objects.filter(favorited_by__user=request.user).prefetch_related("images")
+
+    return render(request, "artworks/favorites.html", {
+        "artworks": favorite_artworks
+        })
+
+@login_required
+def toggle_favorite(request, artwork_id):
+    if request.method != "POST":
+        return redirect("artworks:artwork_detail", artwork_id=artwork_id)
+
+    artwork = get_object_or_404(Artwork, id=artwork_id)
+    favorite, created = Favorite.objects.get_or_create(
+        user=request.user,
+        artwork=artwork,
+    )
+
+    if not created:
+        favorite.delete()
+        messages.success(request, "Artwork removed from favorites")
+
+
+    if created:
+        messages.success(request, "Artwork added to favorites")
+
+    referer = request.META.get("HTTP_REFERER", "artworks:index")
+    return redirect(referer)

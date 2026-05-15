@@ -174,7 +174,6 @@
         <div class="col-md-7">
 
             <h1>{{ artwork.title }}</h1>
-
             <h3>
                 by {{ artwork.artist_name }}
             </h3>
@@ -301,7 +300,24 @@
                 </div>
 
             </div>
-
+            {% if request.user.is_authenticated %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="post" action="{% url 'artworks:toggle_favorite' artwork.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        {% if is_favorited %}
+                            <button type="submit" class="btn btn-danger">
+                                ♥ Remove from Favorites
+                            </button>
+                        {% else %}
+                            <button type="submit" class="btn btn-outline-danger">
+                                ♡ Save to Favorites
+                            </button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+            {% endif %}
             <script>
 
                 function copyArtworkLink() {
@@ -323,7 +339,6 @@
             </script>
 
             <div class="card">
-
                 <div class="card-body">
 
                     <h5 class="card-title">
