@@ -70,6 +70,7 @@ footer {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
     color: var(--primary-text);
+    border-radius: 0;
 }
 
 .btn-primary:hover,
@@ -94,6 +95,7 @@ footer {
 .btn-outline-primary {
     border: 1.5px solid var(--primary-color);
     color: var(--primary-color);
+    border-radius: 0;
 }
 
 .btn-outline-primary:hover {
@@ -116,6 +118,7 @@ footer {
     background-color: transparent;
     border: 1.5px solid var(--secondary-color);
     color: var(--secondary-color);
+    border-radius: 0;
 }
 
 .btn-secondary:hover,
