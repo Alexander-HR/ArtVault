@@ -191,3 +191,12 @@ img.card-img-top.artwork-thumbnail {
 .status-badge.status-contingent {
   color: blue;
 }
+
+/* Drop down and search bar*/
+.form-select.w-auto {
+    background-color: #FAEFE6;
+}
+
+.search{
+    background-color: #FAEFE6
+}
