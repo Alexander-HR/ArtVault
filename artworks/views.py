@@ -155,6 +155,12 @@ def toggle_favorite(request, artwork_id):
         artwork=artwork,
     )
 
+x/favorites-catalogue-button
+    if not created:
+        favorite.delete()
+        messages.success(request, "Artwork removed from favorites")
+
+
     if created:
         messages.success(request, "Artwork added to favorites.")
     else:
@@ -162,3 +168,4 @@ def toggle_favorite(request, artwork_id):
         messages.success(request, "Artwork removed from favorites.")
 
     return redirect(request.META.get("HTTP_REFERER", "artworks:index"))
+

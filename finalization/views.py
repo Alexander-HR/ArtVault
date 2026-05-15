@@ -11,9 +11,9 @@ from finalization.forms import FinalizationForm, PaymentForm, AddressForm
 def contact_step(request, bid_id):
     bid = get_object_or_404(Bid, id=bid_id)
 
-    if bid.status != "accepted":
+    if bid.status not in ["accepted", "contingent"]:
         messages.error(request,
-            "Only bids that have status 'accepted' can be finalized."
+            "Only bids that have status 'Accepted' or 'Contingent' can be finalized."
         )
         return redirect("bids:my_bids")
 
@@ -52,9 +52,9 @@ def payment_step(request, bid_id):
     bid = get_object_or_404(Bid, id=bid_id)
     finalization = get_object_or_404(Finalization, bid=bid)
 
-    if bid.status != "accepted":
+    if bid.status not in ["accepted", "contingent"]:
         messages.error(request,
-            "Only bids that have status 'Accepted' can be finalized."
+            "Only bids that have status 'Accepted' or 'Contingent' can be finalized."
         )
         return redirect("bids:my_bids")
 
@@ -86,9 +86,9 @@ def payment_step(request, bid_id):
 def review_step(request, bid_id):
     bid = get_object_or_404(Bid, id=bid_id)
     finalization = get_object_or_404(Finalization, bid=bid)
-    if bid.status != "accepted":
+    if bid.status not in ["accepted", "contingent"]:
         messages.error(request,
-            "Only bids that have status 'Accepted' can be finalized."
+            "Only bids that have status 'Accepted' or 'Contingent' can be finalized."
         )
         return redirect("bids:my_bids")
 

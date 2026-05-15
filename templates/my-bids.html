@@ -27,7 +27,9 @@
                     <thead>
                         <tr>
                             <th>Artwork</th>
+                            <th>Seller</th>
                             <th>Bid Price</th>
+                            <th>Bid Date</th>
                             <th>Status</th>
                             <th>Expires</th>
                             <th>Actions</th>
@@ -37,7 +39,9 @@
                         {% for bid in bids %}
                         <tr>
                             <td>{{ bid.artwork.title }}</td>
+                            <td>{{ bid.artwork.seller.user.get_full_name|default:bid.artwork.seller.user.username }}</td>
                             <td>{{ bid.amount | floatformat:0 | intcomma }}ISK</td>
+                            <td>{{ bid.created_at|date:"M d, Y" }}</td>
                             <td>{{ bid.get_status_display }}</td>
                             <td>{{ bid.expires_at|date:"M d, Y" }}</td>
                             <td>
@@ -50,7 +54,7 @@
                                 <a href="{% url 'finalization:contact_step' bid.id %}" class="btn btn-success btn-sm d-block mb-1">Finalize</a>
                                 <a href="#" class="btn btn-secondary btn-sm d-block">Review terms</a>
                                 {% elif bid.status == 'outbid' %} or {% elif bid.status == 'pending' %}
-                                <a href="#" class="btn btn-success btn-sm d-block mb-1">Resubmit</a>
+                                <a href="{% url 'bids:resubmit_bid' bid.id %}" class="btn btn-success btn-sm d-block mb-1">Resubmit</a>
                                 <a href="{% url 'artworks:artwork_detail' bid.artwork.id %}" class="btn btn-secondary btn-sm d-block">Details</a>
                                 {% else %}
                                     —
@@ -59,7 +63,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center">You have not submitted any bids yet.</td>
+                            <td colspan="7" class="text-center">You have not submitted any bids yet.</td>
                         </tr>
                         {% endfor %}
                     </tbody>

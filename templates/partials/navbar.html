@@ -41,17 +41,35 @@
                 </li>
 
                 {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                Profile
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="nav-link" href="{% url 'profile' %}">
+                                        Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" href="{% url 'artworks:favorites' %}">
+                                        Favorites
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" href="{% url 'bids:my_bids' %}">
+                                        My Bids
+                                    </a>
+                                </li>
+                            </ul>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'bids:my_bids' %}">
-                            My Bids
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' %}">
-                            Profile
-                        </a>
+                        </li>
                     </li>
 
                     <li class="nav-item">
@@ -148,11 +166,6 @@
                                 Inbox
                             </a>
                         </span>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'artworks:favorites' %}">
-                            Favorites
                     </li>
                     <li class="nav-item">
                         <span class="navbar-text me-3">
