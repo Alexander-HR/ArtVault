@@ -49,39 +49,39 @@ class PaymentForm(forms.ModelForm):
 
         return cardholder
 
-    def clean_card_num(self):
-        card_num = self.cleaned_data.get("card_number")
+    def clean_card_number(self):
+        card_number = self.cleaned_data.get("card_number")
 
-        if card_num:
-            card_num = card_num.replace(" ", "")
+        if card_number:
+            card_number = card_number.replace(" ", "")
 
-            if not card_num.isdigit():
+            if not card_number.isdigit():
                 raise forms.ValidationError("Card number must contain only digits.")
 
-            if len(card_num) != 16:
+            if len(card_number) != 16:
                 raise forms.ValidationError("Card number must be 16 digits.")
 
-        return card_num
+        return card_number
 
-    def clean_card_expiry(self):
-        expiry = self.cleaned_data.get("card_expiration")
+    def clean_card_expiration(self):
+        card_expiration = self.cleaned_data.get("card_expiration")
 
-        if expiry and not re.match(r"^(0[1-9]|1[0-2])\/\d{2}$", expiry):
+        if card_expiration and not re.match(r"^(0[1-9]|1[0-2])\/\d{2}$", card_expiration):
             raise forms.ValidationError("Expiry date must be in MM/YY format.")
 
-        return expiry
+        return card_expiration
 
-    def clean_cvc(self):
-        cvc = self.cleaned_data.get("card_cvc")
+    def clean_card_cvc(self):
+        card_cvc = self.cleaned_data.get("card_cvc")
 
-        if cvc:
-            if not cvc.isdigit():
+        if card_cvc:
+            if not card_cvc.isdigit():
                 raise forms.ValidationError("CVC must contain only numbers.")
 
-            if len(cvc) != 3:
+            if len(card_cvc) != 3:
                 raise forms.ValidationError("CVC must be 3 digits.")
 
-        return cvc
+        return card_cvc
 
     def clean_bank_account(self):
         bank_account = self.cleaned_data.get("bank_account")
@@ -102,7 +102,7 @@ class PaymentForm(forms.ModelForm):
 
         return bank_name
 
-    def clean_routing_num(self):
+    def clean_routing_number(self):
         routing_num = self.cleaned_data.get("routing_number")
 
         if routing_num:
@@ -116,7 +116,7 @@ class PaymentForm(forms.ModelForm):
 
         return routing_num
 
-    def clean_account_num(self):
+    def clean_account_number(self):
         account_num = self.cleaned_data.get("account_number")
         if account_num:
             account_num = account_num.replace(" ", "").replace("-", "")
@@ -134,14 +134,14 @@ class PaymentForm(forms.ModelForm):
 
         payment_type = cleaned_data.get("payment_type")
         if payment_type == "credit_card":
-            for field in ["cardholder", "card_num", "card_expiry", "cvc"]:
+            for field in ["cardholder", "card_number", "card_expiration", "card_cvc"]:
                 if not cleaned_data.get(field):
                     self.add_error(field,"This field is required.")
         elif payment_type == "bank_transfer":
             if not cleaned_data.get("bank_account"):
                 self.add_error("bank_account", "This field is required.")
         elif payment_type == "wire_transfer":
-            for field in ["bank_name", "routing_num", "account_num"]:
+            for field in ["bank_name", "routing_number", "account_number"]:
                 if not cleaned_data.get(field):
                     self.add_error(field, "This field is required.")
         return cleaned_data
