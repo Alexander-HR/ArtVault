@@ -155,7 +155,6 @@ def toggle_favorite(request, artwork_id):
         artwork=artwork,
     )
 
-x/favorites-catalogue-button
     if not created:
         favorite.delete()
         messages.success(request, "Artwork removed from favorites")
