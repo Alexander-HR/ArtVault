@@ -51,13 +51,14 @@ footer {
     background-color: var(--bg-primary);
 }
 
-.table-striped > tbody > tr:nth-of-type(even) {
-    background-color: var(--bg-stripe-dark);
+.table-striped.mt-4 > tbody > tr:nth-of-type(even) {
+    background-color: var(--bg-stripe-dark) !important;
 }
 
-.table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: var(--bg-card);
+.table-striped.mt-4 > tbody > tr:nth-of-type(odd) {
+    background-color: var(--bg-card) !important;
 }
+
 
 .table thead {
     background-color: var(--bg-secondary);
@@ -175,21 +176,21 @@ img.card-img-top.artwork-thumbnail {
 /* Status based coloring */
 
 .status-badge.status-accepted {
-  color: green;
+  color: #175A6C;
   font-weight: bold;
 }
 
 .status-badge.status-rejected {
-  color: red;
+  color: #9E3E33;
   font-weight: bold;
 }
 
 .status-badge.status-pending {
-  color: orange;
+  color: #454B40;
 }
 
 .status-badge.status-contingent {
-  color: blue;
+  color: #175A6C;
 }
 
 /* Drop down and search bar*/
