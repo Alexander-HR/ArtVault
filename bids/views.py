@@ -60,7 +60,6 @@ def seller_bids_overview(request):
         Bid.objects
         .filter(artwork__seller=seller)
         .select_related("artwork", "buyer")
-        .order_by("-created_at")
         .distinct("artwork_id")
     )
 
