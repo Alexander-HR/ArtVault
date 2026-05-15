@@ -34,6 +34,7 @@ def submit_bid(request, artwork_id):
             artwork=artwork,
             defaults={
                 'amount': form.cleaned_data['amount'],
+                'expires_at': form.cleaned_data['expires_at'],
             }
         )
 
