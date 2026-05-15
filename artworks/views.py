@@ -72,6 +72,12 @@ def index(request):
     elif sold == "available":
         artworks = artworks.filter(sold=False)
 
+    favorited_ids = set()
+    if request.user.is_authenticated:
+        favorited_ids = set(
+            Favorite.objects.filter(user=request.user).values_list('artwork_id', flat=True)
+        )
+
     return render(request, "artworks/index.html", {
         "artworks": artworks,
         "medium_choices": Artwork.MEDIUM_CHOICES,
@@ -81,6 +87,7 @@ def index(request):
         "search": search,
         "order_by": order_by,
         "selected_sold": sold,
+        "favorited_ids": favorited_ids,
     })
 
 
@@ -149,5 +156,10 @@ def toggle_favorite(request, artwork_id):
 
     if not created:
         favorite.delete()
+        messages.success(request, "Artwork removed from favorites")
+
+    
+    if created:
+        messages.success(request, "Artwork added to favorites")
 
     return redirect("artworks:artwork_detail", artwork_id=artwork_id)
