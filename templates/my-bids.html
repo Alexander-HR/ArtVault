@@ -46,11 +46,12 @@
                             <td>{{ bid.expires_at|date:"M d, Y" }}</td>
                             <td>
                                 {% if bid.status == 'accepted' %}
-                                <a href="#" class="btn btn-success btn-sm d-block mb-1">Finalize</a>
+                                <a href="{% url 'finalization:contact_step' bid.id %}" class="btn btn-success btn-sm d-block mb-1">Finalize</a>
                                 <a href="{% url 'artworks:artwork_detail' bid.artwork.id %}" class="btn btn-secondary btn-sm d-block">Details</a>
                                 {% elif bid.status == 'rejected' %}
                                 <a href="{% url 'artworks:artwork_detail' bid.artwork.id %}" class="btn btn-secondary btn-sm d-block">Details</a>
                                 {% elif bid.status == 'contingent' %}
+                                <a href="{% url 'finalization:contact_step' bid.id %}" class="btn btn-success btn-sm d-block mb-1">Finalize</a>
                                 <a href="#" class="btn btn-secondary btn-sm d-block">Review terms</a>
                                 {% elif bid.status == 'outbid' %} or {% elif bid.status == 'pending' %}
                                 <a href="{% url 'bids:resubmit_bid' bid.id %}" class="btn btn-success btn-sm d-block mb-1">Resubmit</a>

@@ -14,6 +14,7 @@ class ArtworkForm(forms.ModelForm):
             "year_created",
             "edition",
             "provenance",
+            "artist_name",
         ]
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control"}),
@@ -24,4 +25,5 @@ class ArtworkForm(forms.ModelForm):
             "year_created": forms.NumberInput(attrs={"class": "form-control"}),
             "edition": forms.TextInput(attrs={"class": "form-control"}),
             "provenance": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
+            "artist_name": forms.TextInput(attrs={"class": "form-control"}),
         }

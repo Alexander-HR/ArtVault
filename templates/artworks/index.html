@@ -74,15 +74,16 @@
                             <span class ="badge bg-success">Available</span>
                         {% endif %}
                         <h3 class="card-title">{{artwork.title}}</h3>
+                        <h5>by {{ artwork.artist_name }}</h5>
                         {% if artwork.highest_bid %}
                             <p>Highest bid: {{ artwork.highest_bid | floatformat:0 | intcomma }} ISK</p>
                         {% else %}
-                            <p>Starting bids: {{ artwork.starting_bid | floatformat:0 | intcomma }} ISK</p>
+                            <p>Starting bid: {{ artwork.starting_bid | floatformat:0 | intcomma }} ISK</p>
                         {% endif %}
                         <p class="card-text">Medium: {{ artwork.medium }}</p>
                         <p class="card-text">Dimensions: {{ artwork.dimensions }}</p>
 
-                        <a class="btn btn-outline-dark mt-2" href="{% url 'artworks:artwork_detail' artwork.id %}">See more</a>
+                        <a class="btn btn-outline-dark mt-2 btn-sm" href="{% url 'artworks:artwork_detail' artwork.id %}">View details</a>
 
                     </div>
                 </div>
