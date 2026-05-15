@@ -20,7 +20,10 @@
                 {{ message.date_created }}
                 </small>
                 <div class="mb-3">
-                    From: {{ message.sender.username }}
+                    <strong>From:</strong> {{ message.sender.username }}
+                </div>
+                <div class="mb-3">
+                    <strong>Subject:</strong> {{ message.subject }}
                 </div>
                 <div class="mb-3">
                     {{ message.body }}
