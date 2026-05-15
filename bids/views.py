@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import Max, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from accounts.models import Seller, Notification
-from artworks.models import Artwork
+from artworks.models import Artwork, Favorite
 
 from .forms import BidForm
 from .models import Bid
@@ -20,7 +21,12 @@ def submit_bid(request, artwork_id):
             artwork_id=artwork_id
         )
 
-    artwork = get_object_or_404(Artwork, pk=artwork_id)
+    artwork = get_object_or_404(
+        Artwork.objects.prefetch_related("images", "bids").annotate(
+            highest_bid=Max('bids__amount', filter=~Q(bids__status='rejected'))
+        ),
+        pk=artwork_id
+    )
 
     form = BidForm(
         request.POST,
@@ -29,12 +35,14 @@ def submit_bid(request, artwork_id):
 
     if form.is_valid():
 
-        bid = form.save(commit=False)
-
-        bid.artwork = artwork
-        bid.buyer = request.user
-
-        bid.save()
+        bid, created = Bid.objects.update_or_create(
+            buyer=request.user,
+            artwork=artwork,
+            defaults={
+                'amount': form.cleaned_data['amount'],
+                'expires_at': form.cleaned_data['expires_at'],
+            }
+        )
 
         try:
             Notification.objects.create(
@@ -62,6 +70,10 @@ def submit_bid(request, artwork_id):
             "Please correct the errors below."
         )
 
+        is_favorited = Favorite.objects.filter(
+            user=request.user, artwork=artwork
+        ).exists()
+
         context = {
             "artwork": artwork,
             "images": artwork.images.all(),
@@ -75,6 +87,8 @@ def submit_bid(request, artwork_id):
                 .order_by("-created_at")
                 .first()
             ),
+            "seller": getattr(artwork, "seller", None),
+            "is_favorited": is_favorited
         }
 
         return render(
@@ -289,3 +303,10 @@ def accept_bid(request, bid_id):
     )
 
     return redirect("bids:seller_bids_overview")
+
+
+@login_required
+def resubmit_bid(request, bid_id):
+    
+    bid = get_object_or_404(Bid, id=bid_id, buyer=request.user)
+    return redirect("artworks:artwork_detail", artwork_id=bid.artwork.id)

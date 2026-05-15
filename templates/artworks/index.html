@@ -84,6 +84,16 @@
                         <p class="card-text">Dimensions: {{ artwork.dimensions }}</p>
 
                         <a class="btn btn-outline-dark mt-2 btn-sm" href="{% url 'artworks:artwork_detail' artwork.id %}">View details</a>
+                        {% if request.user.is_authenticated %}
+                            <form method="post" action="{% url 'artworks:toggle_favorite' artwork.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                {% if artwork.id in favorited_ids %}
+                                    <button type="submit" class="btn btn-outline-dark mt-2 btn-sm">♥</button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-outline-dark mt-2 btn-sm">♡</button>
+                                {% endif %}
+                            </form>
+                        {% endif %}
 
                     </div>
                 </div>
