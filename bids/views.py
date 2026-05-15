@@ -29,12 +29,13 @@ def submit_bid(request, artwork_id):
 
     if form.is_valid():
 
-        bid = form.save(commit=False)
-
-        bid.artwork = artwork
-        bid.buyer = request.user
-
-        bid.save()
+        bid, created = Bid.objects.update_or_create(
+            buyer=request.user,
+            artwork=artwork,
+            defaults={
+                'amount': form.cleaned_data['amount'],
+            }
+        )
 
         try:
             Notification.objects.create(
@@ -293,5 +294,6 @@ def accept_bid(request, bid_id):
 
 @login_required
 def resubmit_bid(request, bid_id):
+    
     bid = get_object_or_404(Bid, id=bid_id, buyer=request.user)
     return redirect("artworks:artwork_detail", artwork_id=bid.artwork.id)
