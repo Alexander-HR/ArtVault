@@ -11,4 +11,5 @@ urlpatterns = [
 
     path("seller/overview/", views.seller_bids_overview, name="seller_bids_overview"),
     path("<int:bid_id>/accept/", views.accept_bid, name="accept_bid"),
+    path("<int:bid_id>/resubmit/", views.resubmit_bid, name="resubmit_bid"),
 ]
