@@ -33,7 +33,7 @@ def submit_bid(request, artwork_id):
 @login_required
 def my_bids(request):
     tab = request.GET.get("tab", "active")
-    bids = request.user.bids.select_related("artwork").order_by("-created_at")
+    bids = request.user.bids.select_related("artwork").distinct("artwork_id")
 
     if tab == "active":
         bids = bids.filter(expires_at__gt=timezone.now())
@@ -61,6 +61,7 @@ def seller_bids_overview(request):
         .filter(artwork__seller=seller)
         .select_related("artwork", "buyer")
         .order_by("-created_at")
+        .distinct("artwork_id")
     )
 
     return render(request, "bids/seller_bids_overview.html", {
