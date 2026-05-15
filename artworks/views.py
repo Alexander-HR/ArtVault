@@ -147,7 +147,7 @@ def favorites(request):
 def toggle_favorite(request, artwork_id):
     if request.method != "POST":
         return redirect("artworks:artwork_detail", artwork_id=artwork_id)
-    
+
     artwork = get_object_or_404(Artwork, id=artwork_id)
     favorite, created = Favorite.objects.get_or_create(
         user=request.user,
@@ -158,8 +158,9 @@ def toggle_favorite(request, artwork_id):
         favorite.delete()
         messages.success(request, "Artwork removed from favorites")
 
-    
+
     if created:
         messages.success(request, "Artwork added to favorites")
 
-    return redirect("artworks:artwork_detail", artwork_id=artwork_id)
+    referer = request.META.get("HTTP_REFERER", "artworks:index")
+    return redirect(referer)
