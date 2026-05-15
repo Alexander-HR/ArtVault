@@ -1,11 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Noto+Serif:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #175A6C;
+    --primary-text: #FFF8F4;
+    --secondary-color: #352F2A;
+    --bg-primary: #FFF8F4;
+    --bg-secondary: #C2CCC4;
+    --bg-card: #FAEFE6;
+    --bg-stripe-dark: #ECE0D8;
+}
+
+* {
+    font-family: 'Manrope', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, .navbar-brand {
+    font-family: 'Noto Serif', serif;
+}
+
 body {
-    background-color: #f8f9fa;
+    background-color: var(--bg-primary);
+    color: #333;
+}
+
+/* Navbar & Footer */
+.navbar {
+    background-color: var(--bg-secondary) !important;
 }
 
 .navbar-brand {
     letter-spacing: 0.5px;
 }
 
+footer {
+    background-color: var(--bg-secondary);
+}
+
+/* Cards */
+.card {
+    background-color: var(--bg-card);
+    border: none;
+}
+
+.card-body {
+    background-color: var(--bg-card);
+}
+
+/* Tables */
+.table {
+    background-color: var(--bg-primary);
+}
+
+.table-striped > tbody > tr:nth-of-type(even) {
+    background-color: var(--bg-stripe-dark);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: var(--bg-card);
+}
+
+.table thead {
+    background-color: var(--bg-secondary);
+    color: #333;
+}
+
+/* Primary Buttons */
+.btn-primary,
+.btn-success {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--primary-text);
+    border-radius: 0;
+}
+
+.btn-primary:hover,
+.btn-success:hover {
+    background-color: #0f3f52;
+    border-color: #0f3f52;
+    color: var(--primary-text);
+}
+
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.btn-success:focus,
+.btn-success:active,
+.btn-success.active {
+    background-color: #0f3f52;
+    border-color: #0f3f52;
+    color: var(--primary-text);
+}
+
+/* Outline Primary Buttons */
+.btn-outline-primary {
+    border: 1.5px solid var(--primary-color);
+    color: var(--primary-color);
+    border-radius: 0;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--primary-text);
+}
+
+.btn-outline-primary:focus,
+.btn-outline-primary:active,
+.btn-outline-primary.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--primary-text);
+}
+
+/* Secondary Buttons */
+.btn-secondary,
+.btn-outline-secondary {
+    background-color: transparent;
+    border: 1.5px solid var(--secondary-color);
+    color: var(--secondary-color);
+    border-radius: 0;
+}
+
+.btn-secondary:hover,
+.btn-outline-secondary:hover {
+    background-color: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+}
+
+.btn-secondary:focus,
+.btn-secondary:active,
+.btn-secondary.active,
+.btn-outline-secondary:focus,
+.btn-outline-secondary:active,
+.btn-outline-secondary.active {
+    background-color: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+}
+
+/* Artwork Image */
 img.card-img-top.artwork-thumbnail {
     height: 250px;
     object-fit: cover;
