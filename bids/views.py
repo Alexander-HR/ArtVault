@@ -108,3 +108,9 @@ def accept_bid(request, bid_id):
 
     messages.success(request, "Bid accepted successfully. The artwork is now marked as sold.")
     return redirect("bids:seller_bids_overview")
+
+
+@login_required
+def resubmit_bid(request, bid_id):
+    bid = get_object_or_404(Bid, id=bid_id, buyer=request.user)
+    return redirect("artworks:artwork_detail", artwork_id=bid.artwork.id)
