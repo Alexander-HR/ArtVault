@@ -149,18 +149,23 @@ def toggle_favorite(request, artwork_id):
         return redirect("artworks:artwork_detail", artwork_id=artwork_id)
 
     artwork = get_object_or_404(Artwork, id=artwork_id)
+
     favorite, created = Favorite.objects.get_or_create(
         user=request.user,
         artwork=artwork,
     )
 
+x/favorites-catalogue-button
     if not created:
         favorite.delete()
         messages.success(request, "Artwork removed from favorites")
 
 
     if created:
-        messages.success(request, "Artwork added to favorites")
+        messages.success(request, "Artwork added to favorites.")
+    else:
+        favorite.delete()
+        messages.success(request, "Artwork removed from favorites.")
 
-    referer = request.META.get("HTTP_REFERER", "artworks:index")
-    return redirect(referer)
+    return redirect(request.META.get("HTTP_REFERER", "artworks:index"))
+
