@@ -24,25 +24,38 @@
         <div class="row">
             <div class="col">
                 <table class="table table-responsive">
-                    <thead>
-                        <tr>
-                            <th>Artwork</th>
-                            <th>Seller</th>
-                            <th>Bid Price</th>
-                            <th>Bid Date</th>
-                            <th>Status</th>
-                            <th>Expires</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
                     <tbody>
                         {% for bid in bids %}
                         <tr>
-                            <td>{{ bid.artwork.title }}</td>
-                            <td>{{ bid.artwork.seller.user.get_full_name|default:bid.artwork.seller.user.username }}</td>
-                            <td>{{ bid.amount | floatformat:0 | intcomma }}ISK</td>
-                            <td><td><span class="status-badge status-{{ bid.status }}">{{ bid.get_status_display }}</span></td></td>
-                            <td>{{ bid.expires_at|date:"M d, Y" }}</td>
+                            <td>
+                                {% with first_image=bid.artwork.images.first %}
+                                    {% if first_image and first_image.image %}
+                                        <img src="{{ first_image.image.url }}" style="width: 80px; height: 80px; object-fit: cover; margin-right: 10px;">
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                            <td>  
+                                <div>
+                                    <strong>{{ bid.artwork.title }}</strong>
+                                    <div>by {{ bid.artwork.artist_name }}</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="font-size: 0.85em; margin-bottom: 5px; padding:8px">Seller</div>
+                                {{ bid.artwork.seller.user.get_full_name|default:bid.artwork.seller.user.username }}
+                            </td>
+                            <td>
+                                <div style="font-size: 0.85em; margin-bottom: 5px; padding:8px">Bid amount</div>
+                                {{ bid.amount | floatformat:0 | intcomma }}ISK
+                            </td>
+                            <td>
+                                <div style="font-size: 0.85em; margin-bottom: 5px; padding:8px">Status</div>
+                                <span class="status-badge status-{{ bid.status }}">{{ bid.get_status_display }}</span>
+                            </td>
+                            <td>
+                                <div style="font-size: 0.85em; margin-bottom: 5px; padding:8px">Expiration</div>
+                                {{ bid.expires_at|date:"M d, Y" }}
+                            </td>
                             <td>
                                 {% if bid.status == 'accepted' %}
                                 <a href="{% url 'finalization:contact_step' bid.id %}" class="btn btn-success btn-sm d-block mb-1">Finalize</a>

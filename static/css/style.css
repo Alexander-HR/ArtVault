@@ -51,14 +51,19 @@ footer {
     background-color: var(--bg-primary);
 }
 
-.table-striped.mt-4 > tbody > tr:nth-of-type(even) {
-    background-color: var(--bg-stripe-dark) !important;
+.table.table-responsive {
+    border-collapse: separate;
+    border-spacing: 0 15px;
 }
 
-.table-striped.mt-4 > tbody > tr:nth-of-type(odd) {
-    background-color: var(--bg-card) !important;
+.table.table-responsive > tbody > tr {
+    vertical-align: middle;
+    --bs-table-bg: #FAEFE6;
 }
 
+.table.table-responsive td {
+    padding: 30px 20px !important;
+}
 
 .table thead {
     background-color: var(--bg-secondary);
@@ -175,23 +180,36 @@ img.card-img-top.artwork-thumbnail {
 
 /* Status based coloring */
 
+.status-badge {
+  font-family: 'Manrope';
+  font-weight: 200;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 2px solid;
+  background-color: transparent;
+}
+
 .status-badge.status-accepted {
   color: #175A6C;
-  font-weight: bold;
+  border-color: #175A6C;
 }
 
 .status-badge.status-rejected {
   color: #9E3E33;
-  font-weight: bold;
+  border-color: #9E3E33;
 }
 
 .status-badge.status-pending {
   color: #454B40;
+  border-color: #454B40;
 }
 
 .status-badge.status-contingent {
   color: #175A6C;
+  border-color: #175A6C;
 }
+
 
 /* Drop down and search bar*/
 .form-select.w-auto {
@@ -200,4 +218,13 @@ img.card-img-top.artwork-thumbnail {
 
 .search{
     background-color: #FAEFE6
+}
+
+/* Favorites button */
+.btn.btn-danger {
+    border-radius: 0;
+}
+
+.btn.btn-outline-danger{
+    border-radius: 0;
 }
