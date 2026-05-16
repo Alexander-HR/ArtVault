@@ -155,11 +155,6 @@ def toggle_favorite(request, artwork_id):
         artwork=artwork,
     )
 
-    if not created:
-        favorite.delete()
-        messages.success(request, "Artwork removed from favorites")
-
-
     if created:
         messages.success(request, "Artwork added to favorites.")
     else:
