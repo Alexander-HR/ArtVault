@@ -31,7 +31,7 @@
 
 ### Seller Account
 - Username: testuser_signup_1
-- Password: 
+- Password: Testpassword123
 
 ### Admin Account
 - Username: alexia
