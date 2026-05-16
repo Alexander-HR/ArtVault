@@ -1,14 +1,30 @@
 # ArtVault
 
-## Environment
-- Default development server runs on:
-  `http://127.0.0.1:8000/`
+## Installation & Running the Project
 
-- PostgreSQL default port:
-  `5432`
+Install required packages:
 
-## Requirements
-- Install required packages from `requirements.txt`
+```bash
+pip install -r requirements.txt
+```
+
+Run migrations:
+
+```bash
+python manage.py migrate
+```
+
+Start development server:
+
+```bash
+python manage.py runserver
+```
+
+Open in browser:
+
+```text
+http://127.0.0.1:8000/
+```
 
 ## Extra requirements implemented:
 - Share artwork link via Artwork details page
