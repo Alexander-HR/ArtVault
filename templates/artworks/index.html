@@ -5,7 +5,7 @@
     <h2 class="mb-4">Artwork Catalogue</h2>
     <div class="row">
         <form method="get" class="d-flex flex-wrap gap-2 mb-4">
-            <input type="text" name="search" placeholder=" Search titles" value="{{ search|default:'' }}">
+            <input type="text" class="search" name="search" placeholder=" Search titles" value="{{ search|default:'' }}">
 
            <select name="sold" class="form-select w-auto">
                 <option value="">--All Artwork--</option>
@@ -83,16 +83,27 @@
                         <p class="card-text">Medium: {{ artwork.medium }}</p>
                         <p class="card-text">Dimensions: {{ artwork.dimensions }}</p>
 
-                        <a class="btn btn-outline-dark mt-2 btn-sm" href="{% url 'artworks:artwork_detail' artwork.id %}">View details</a>
+                        <a class="btn btn-secondary btn-sm"
+                           href="{% url 'artworks:artwork_detail' artwork.id %}">
+                            View details
+                        </a>
+
                         {% if request.user.is_authenticated %}
-                            <form method="post" action="{% url 'artworks:toggle_favorite' artwork.id %}" style="display: inline;">
+                            <form method="post"
+                                  action="{% url 'artworks:toggle_favorite' artwork.id %}"
+                                  style="display: inline;">
                                 {% csrf_token %}
                                 {% if artwork.id in favorited_ids %}
-                                    <button type="submit" class="btn btn-outline-dark mt-2 btn-sm">♥</button>
+                                    <button type="submit" class="btn btn-secondary btn-sm">♥</button>
                                 {% else %}
-                                    <button type="submit" class="btn btn-outline-dark mt-2 btn-sm">♡</button>
+                                    <button type="submit" class="btn btn-secondary btn-sm">♡</button>
                                 {% endif %}
                             </form>
+                        {% else %}
+                            <a class="btn btn-outline-danger btn-sm ms-2"
+                               href="{% url 'login' %}?next={{ request.path }}">
+                                ♡
+                            </a>
                         {% endif %}
 
                     </div>

@@ -51,12 +51,18 @@ footer {
     background-color: var(--bg-primary);
 }
 
-.table-striped > tbody > tr:nth-of-type(even) {
-    background-color: var(--bg-stripe-dark);
+.table.table-responsive {
+    border-collapse: separate;
+    border-spacing: 0 15px;
 }
 
-.table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: var(--bg-card);
+.table.table-responsive > tbody > tr {
+    vertical-align: middle;
+    --bs-table-bg: #FAEFE6;
+}
+
+.table.table-responsive td {
+    padding: 30px 20px !important;
 }
 
 .table thead {
@@ -139,8 +145,86 @@ footer {
     border-color: var(--secondary-color);
 }
 
+/* Button dark */
+.btn-dark,
+.btn-success {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--primary-text);
+    border-radius: 0;
+}
+
+.btn-dark:hover,
+.btn-dark:hover {
+    background-color: #0f3f52;
+    border-color: #0f3f52;
+    color: var(--primary-text);
+}
+
+.btn-dark:focus,
+.btn-dark:active,
+.btn-dark.active,
+.btn-dark:focus,
+.btn-dark:active,
+.btn-dark.active {
+    background-color: #0f3f52;
+    border-color: #0f3f52;
+    color: var(--primary-text);
+}
+
 /* Artwork Image */
 img.card-img-top.artwork-thumbnail {
     height: 250px;
     object-fit: cover;
+}
+
+/* Status based coloring */
+
+.status-badge {
+  font-family: 'Manrope';
+  font-weight: 200;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 2px solid;
+  background-color: transparent;
+}
+
+.status-badge.status-accepted {
+  color: #175A6C;
+  border-color: #175A6C;
+}
+
+.status-badge.status-rejected {
+  color: #9E3E33;
+  border-color: #9E3E33;
+}
+
+.status-badge.status-pending {
+  color: #454B40;
+  border-color: #454B40;
+}
+
+.status-badge.status-contingent {
+  color: #175A6C;
+  border-color: #175A6C;
+}
+
+
+/* Drop down and search bar*/
+.form-select.w-auto {
+    background-color: #FAEFE6;
+}
+
+.search{
+    background-color: #FAEFE6
+}
+
+/* Favorites button */
+.btn.btn-danger {
+    border-radius: 0;
+}
+
+.btn.btn-outline-danger{
+    border-radius: 0;
 }
